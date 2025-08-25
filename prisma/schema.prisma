@@ -1,0 +1,46 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"  // Start with SQLite for easy development
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  
+  // Basic Info
+  name      String
+  email     String?  @unique  // Optional for local artisans
+  phone     String   @unique  // Primary contact method
+  password  String
+  
+  // Personal Details
+  gender    String?  // "male", "female", "other"
+  age       Int?
+  
+  // Location Details
+  address   String?
+  city      String
+  state     String
+  district  String?
+  pincode   String?
+  
+  // Artisan-specific fields
+  craftType String?  // "pottery", "weaving", "jewelry", etc.
+  experience Int?    // years of experience
+  languages String?  // JSON string of languages spoken
+  
+  // Platform details
+  role      String   @default("artisan")
+  isVerified Boolean @default(false)
+  isActive   Boolean @default(true)
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
