@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     if (!validationResult.success) {
       console.error('Validation failed:', validationResult.error);
       
-      return NextResponse.json<ApiResponse>({
+      return NextResponse.json<ApiResponse<any>>({
         success: false,
         message: 'Validation failed',
         error: validationResult.error.issues?.[0]?.message || 'Invalid input data',
@@ -51,9 +51,11 @@ export async function POST(request: NextRequest) {
     });
 
     if (existingUser) {
-      return NextResponse.json<ApiResponse>({
+      return NextResponse.json<ApiResponse<null>>({
         success: false,
-        error: "User already exists with this phone number or email"
+        message: 'User already exists with this phone number or email',
+        error: 'User already exists with this phone number or email',
+        data: null
       }, { status: 409 });
     }
 
@@ -61,7 +63,7 @@ export async function POST(request: NextRequest) {
     const hashedPassword = await hashPassword(password);
 
     // Create new user
-    const newUser = await db.user.create({
+    const created = await db.user.create({
       data: {
         name,
         email: email || null, // Ensure null if undefined
@@ -76,7 +78,7 @@ export async function POST(request: NextRequest) {
         pincode: pincode || null,
         craftType: craftType || null,
         experience: experience || null,
-        languages: languages || null,
+        languages: Array.isArray(languages) ? JSON.stringify(languages) : (languages ?? null),
         role: "artisan"
       },
       select: {
@@ -94,11 +96,38 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    return NextResponse.json<ApiResponse<Partial<User>>>({
-      success: true,
-      data: newUser,
-      message: "Artisan registered successfully"
-    }, { status: 201 });
+    const newUser: Partial<User> = {
+      id: created.id,
+      name: created.name,
+      email: created.email ?? undefined,
+      phone: created.phone,
+      city: created.city,
+      state: created.state,
+      craftType: created.craftType ?? undefined,
+      role: created.role,
+      isVerified: created.isVerified,
+      isActive: created.isActive,
+      createdAt: created.createdAt as unknown as Date,
+    };
+
+    const res = NextResponse.json<ApiResponse<Partial<User>>>(
+      {
+        success: true,
+        data: newUser,
+        message: "Artisan registered successfully"
+      },
+      { status: 201 }
+    );
+
+    res.cookies.set('session_user', created.id, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7,
+    });
+
+    return res;
 
   } catch (error) {
     console.error('Registration error:', error);
@@ -109,10 +138,11 @@ export async function POST(request: NextRequest) {
       console.error('Error stack:', error.stack);
     }
     
-    return NextResponse.json<ApiResponse>({
+    return NextResponse.json<ApiResponse<null>>({
       success: false,
       error: "Internal server error",
-      message: process.env.NODE_ENV === 'development' ? (error as Error)?.message : undefined
+      message: process.env.NODE_ENV === 'development' ? (error as Error)?.message : 'Internal server error',
+      data: null
     }, { status: 500 });
   }
 }

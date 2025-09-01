@@ -42,5 +42,62 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // Relations
+  products       Product[]
+  buyerOrders    Order[]   @relation("buyerOrders")
+  artisanOrders  Order[]   @relation("artisanOrders")
+
   @@map("users")
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  price       Int      // store in paise/cents
+  stock       Int      @default(0)
+  imageUrl    String?
+
+  artisan     User     @relation(fields: [artisanId], references: [id])
+  artisanId   String
+
+  // Back relations
+  orderItems  OrderItem[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("products")
+}
+
+model Order {
+  id          String   @id @default(cuid())
+  buyer       User     @relation("buyerOrders", fields: [buyerId], references: [id])
+  buyerId     String
+  artisan     User     @relation("artisanOrders", fields: [artisanId], references: [id])
+  artisanId   String
+  status      String   @default("pending") // pending, completed, cancelled
+  totalAmount Int
+  address     String
+  buyerCity   String?
+  buyerState  String?
+
+  items       OrderItem[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  order     Order   @relation(fields: [orderId], references: [id])
+  orderId   String
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+  quantity  Int     @default(1)
+  unitPrice Int     // snapshot price at order time (paise)
+
+  @@map("order_items")
 }
