@@ -20,16 +20,12 @@ export default function BuyerLoginPage() {
 
   const checkAuth = async () => {
     try {
-      // Check if user is already logged in
-      const res = await fetch("/api/auth/check");
+      // Check if user is already logged in as buyer
+      const res = await fetch("/api/buyer/check-auth");
       if (res.ok) {
         const data = await res.json();
-        if (data.authenticated) {
-          if (data.role === 'artisan') {
-            router.push("/dashboard");
-          } else if (data.role === 'buyer') {
-            router.push("/buyer");
-          }
+        if (data.success) {
+          router.push("/buyer");
           return;
         }
       }

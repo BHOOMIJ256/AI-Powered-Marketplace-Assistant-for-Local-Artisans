@@ -1,117 +1,70 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ApiResponse } from "@/types";
 
-export const runtime = "nodejs";
+const STORYTELLING_API_URL = process.env.STORYTELLING_API_URL || "http://localhost:8000";
 
-// Check if AI backend is available
-async function checkAIBackend(): Promise<boolean> {
+export async function POST(request: NextRequest) {
   try {
-    const res = await fetch("http://localhost:8000/health", { 
-      method: "GET",
-      signal: AbortSignal.timeout(2000) // 2 second timeout
-    });
-    return res.ok;
-  } catch {
-    return false;
-  }
-}
-
-export async function POST(req: NextRequest) {
-  try {
-    const form = await req.formData();
-    const image = form.get("image");
-    const audio = form.get("audio");
-    const note = (form.get("note") as string | null)?.toString().slice(0, 500) || "";
-
-    if (!(image instanceof File)) {
-      return NextResponse.json<ApiResponse<null>>({ success: false, message: "Image is required", error: "Image is required", data: null }, { status: 400 });
-    }
-
-    // Try AI backend first
-    const aiBackendAvailable = await checkAIBackend();
+    const formData = await request.formData();
     
-    if (aiBackendAvailable) {
-      console.log("Using AI backend for content generation...");
+    // Check if AI backend is available
+    try {
+      const healthCheck = await fetch(`${STORYTELLING_API_URL}/health`, {
+        method: "GET",
+        signal: AbortSignal.timeout(2000)
+      });
       
-      // Forward to Python AI backend
-      const aiForm = new FormData();
-      aiForm.append("image", image);
-      if (audio) aiForm.append("audio", audio);
-      if (note.trim()) aiForm.append("note", note.trim());
-
-      try {
-        const aiRes = await fetch("http://localhost:8000/generate-story", {
-          method: "POST",
-          body: aiForm,
-          signal: AbortSignal.timeout(30000) // 30 second timeout for AI generation
+      if (healthCheck.ok) {
+        // Use AI backend
+        const response = await fetch(`${STORYTELLING_API_URL}/transcribe-and-respond`, {
+          method: 'POST',
+          body: formData,
         });
 
-        if (aiRes.ok) {
-          const aiData = await aiRes.json();
-          return NextResponse.json<ApiResponse<{ description: string; caption: string; hashtags: string[]; title: string }>>({
-            success: true,
-            message: "AI Generated",
-            data: aiData.data
-          });
-        } else {
-          console.warn("AI backend failed, falling back to template generator");
+        if (response.ok) {
+          const aiData = await response.json();
+          
+          // Process AI response into our format
+          const storyData = {
+            title: "AI-Generated Product Story",
+            description: aiData.ai_response || "AI-generated product description based on your input.",
+            caption: aiData.transcription ? `"${aiData.transcription}" - ${aiData.ai_response?.substring(0, 100)}...` : aiData.ai_response?.substring(0, 150) + "...",
+            hashtags: ["Handmade", "Artisan", "LocalCraft", "Sustainable", "Traditional"]
+          };
+          
+          return NextResponse.json({ success: true, data: storyData });
         }
-      } catch (aiError) {
-        console.warn("AI backend error, falling back to template generator:", aiError);
       }
+    } catch (error) {
+      console.log("AI backend not available, using template mode");
     }
-
-    // Fallback to simple template generator
-    console.log("Using template generator...");
     
-    // Basic heuristic title from filename
-    const filename = image.name?.replace(/[-_]/g, " ").replace(/\.[^.]+$/, "").trim() || "Handcrafted Product";
-
-    // For MVP, simulate image caption + audio transcript
-    const imageCaption = `Photo of ${filename.toLowerCase()} crafted by local artisan.`;
-    const transcript = note || (audio ? "Voice note provided by the artisan." : "");
-
-    // Compose promptless deterministic outputs
-    const description = composeDescription(imageCaption, transcript);
-    const caption = composeCaption(imageCaption, transcript);
-    const hashtags = dedupe(["Handmade", "LocalArtisan", "MadeInIndia", "Sustainable", "CraftCulture"]);
-
-    return NextResponse.json<ApiResponse<{ description: string; caption: string; hashtags: string[]; title: string }>>({
-      success: true,
-      message: "Template Generated (AI backend not available)",
-      data: { description, caption, hashtags, title: toTitleCase(filename) }
-    });
-
+    // Fallback to template-based generation
+    const imageFile = formData.get("image") as File;
+    const audioFile = formData.get("audio") as File;
+    const note = formData.get("note") as string;
+    
+    if (!imageFile) {
+      return NextResponse.json({ success: false, error: "Image is required" }, { status: 400 });
+    }
+    
+    // Generate template-based story
+    const storyData = {
+      title: "Handcrafted Product Story",
+      description: note || "This beautiful handcrafted product represents the rich tradition and skill of local artisans. Each piece is carefully crafted with attention to detail, bringing together traditional techniques with modern aesthetics. Perfect for those who appreciate authentic craftsmanship and unique designs.",
+      caption: note ? `"${note}" - A beautiful handcrafted piece that tells a story of tradition and skill. Perfect for your home or as a special gift.` : "Discover the beauty of handcrafted artistry. Each piece tells a unique story of tradition, skill, and passion.",
+      hashtags: ["Handmade", "Artisan", "LocalCraft", "Sustainable", "Traditional", "Unique"]
+    };
+    
+    return NextResponse.json({ success: true, data: storyData });
+    
   } catch (error) {
-    console.error('Generation error:', error);
-    return NextResponse.json<ApiResponse<null>>({
-      success: false,
-      error: "Internal server error",
-      message: process.env.NODE_ENV === 'development' ? (error as Error)?.message : 'Internal server error',
-      data: null
-    }, { status: 500 });
+    console.error('Error generating story:', error);
+    return NextResponse.json(
+      { 
+        success: false, 
+        error: "Failed to generate story. Please try again." 
+      }, 
+      { status: 500 }
+    );
   }
-}
-
-function composeDescription(caption: string, transcript: string) {
-  const cultural = transcript ? ` ${transcript}` : " This piece reflects traditional craftsmanship and cultural heritage.";
-  return `${toSentence(caption)}${cultural} Crafted with care using locally sourced materials, it blends utility with tradition.`;
-}
-
-function composeCaption(caption: string, transcript: string) {
-  const hint = transcript ? ` — ${transcript}` : "";
-  return `${toSentence(caption)}${hint} Support local makers!`;
-}
-
-function toTitleCase(s: string) {
-  return s.replace(/\s+/g, " ").split(" ").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
-}
-
-function toSentence(s: string) {
-  const t = s.trim();
-  return /[.!?]$/.test(t) ? t : t + ".";
-}
-
-function dedupe<T>(arr: T[]) {
-  return Array.from(new Set(arr));
 }

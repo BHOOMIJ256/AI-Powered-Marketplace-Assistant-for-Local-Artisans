@@ -228,8 +228,11 @@ export default function StoryTool() {
     try {
       const form = new FormData();
       form.append("image", imageFile);
-      if (audioFile) form.append("audio", audioFile);
+      if (audioFile) form.append("file", audioFile); // Changed to match Python API
       if (note.trim()) form.append("note", note.trim());
+      form.append("language_code", "en-US");
+      form.append("generate_ai_response", "true");
+      form.append("model_name", "gemini-1.5-flash");
 
       const res = await fetch("/api/generate-story", { method: "POST", body: form });
       const data = await res.json();

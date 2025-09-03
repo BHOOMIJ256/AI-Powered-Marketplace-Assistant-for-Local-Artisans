@@ -9,8 +9,24 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, message: "Missing required fields" }, { status: 400 });
     }
 
-    const exists = await db.user.findFirst({ where: { OR: [{ phone }, ...(email ? [{ email }] : [])] } });
-    if (exists) return NextResponse.json({ success: false, message: "User already exists" }, { status: 409 });
+    // Check if phone or email already exists
+    const existingUser = await db.user.findFirst({ 
+      where: { 
+        OR: [
+          { phone },
+          ...(email ? [{ email }] : [])
+        ] 
+      } 
+    });
+    
+    if (existingUser) {
+      if (existingUser.phone === phone) {
+        return NextResponse.json({ success: false, message: "Phone number already registered" }, { status: 409 });
+      }
+      if (email && existingUser.email === email) {
+        return NextResponse.json({ success: false, message: "Email already registered" }, { status: 409 });
+      }
+    }
 
     const hashed = await hashPassword(password);
 
@@ -37,6 +53,10 @@ export async function POST(request: NextRequest) {
     });
     return res;
   } catch (e) {
-    return NextResponse.json({ success: false, message: "Internal server error" }, { status: 500 });
+    console.error("Buyer registration error:", e);
+    return NextResponse.json({ 
+      success: false, 
+      message: "Internal server error. Please try again." 
+    }, { status: 500 });
   }
 }

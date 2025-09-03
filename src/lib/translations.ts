@@ -1,6 +1,7 @@
 export const translations = {
   en: {
     // Common
+    welcomeTitle: "Welcome to Artisan Marketplace",
     loginTitle: "Welcome to Artisan Marketplace",
     login: "Login",
     signup: "Sign Up",
@@ -11,6 +12,12 @@ export const translations = {
     logout: "Logout",
     loading: "Loading...",
     buyer: "Buyer",
+    loginAs: "Login As",
+    loginAsSeller: "Login as Seller (Artisan)",
+    loginAsBuyer: "Login as Buyer",
+    newUser: "New User? Sign Up",
+    signupAsSeller: "Sign up as Seller (Artisan)",
+    signupAsBuyer: "Sign up as Buyer",
     
     // Dashboard
     dashboard: "Dashboard",
@@ -108,10 +115,25 @@ export const translations = {
     seasonalTrends: "Seasonal Trends",
     noInsightsAvailable: "No Insights Available",
     startSellingToSeeInsights: "Start selling to see customer insights",
+    
+    // AR Try-On Features
+    tryInAR: "Try in AR",
+    startingAR: "Starting AR...",
+    arSessionActive: "AR Session Active",
+    arInstructions: "Use +/- to resize, p to save snapshot, q/ESC to quit",
+    stopAR: "Stop AR Session",
+    arRequirement: "Requires camera and AR application",
+    
+    // Buyer Signup
+    createAccount: "Create Account",
+    hasAccount: "Already have an account?",
+    city: "City",
+    state: "State",
   },
   
   hi: {
     // Common
+    welcomeTitle: 'कारीगर मार्केटप्लेस में आपका स्वागत है',
     loginTitle: 'वापस आने पर स्वागत है',
     login: 'लॉगिन',
     signup: 'साइन अप',
@@ -122,6 +144,12 @@ export const translations = {
     logout: 'लॉगआउट',
     loading: 'लोड हो रहा है...',
     buyer: "खरीदार",
+    loginAs: "लॉगिन करें",
+    loginAsSeller: "विक्रेता (कारीगर) के रूप में लॉगिन",
+    loginAsBuyer: "खरीदार के रूप में लॉगिन",
+    newUser: "नया उपयोगकर्ता? साइन अप करें",
+    signupAsSeller: "विक्रेता (कारीगर) के रूप में साइन अप",
+    signupAsBuyer: "खरीदार के रूप में साइन अप",
     
     // Dashboard
     dashboard: 'डैशबोर्ड',
@@ -219,10 +247,25 @@ export const translations = {
     seasonalTrends: "मौसमी प्रवृत्तियां",
     noInsightsAvailable: "कोई अंतर्दृष्टि उपलब्ध नहीं",
     startSellingToSeeInsights: "अंतर्दृष्टि देखने के लिए बिक्री शुरू करें",
+    
+    // AR Try-On Features
+    tryInAR: "AR में आज़माएं",
+    startingAR: "AR शुरू हो रहा है...",
+    arSessionActive: "AR सत्र सक्रिय",
+    arInstructions: "आकार बदलने के लिए +/- का उपयोग करें, स्नैपशॉट के लिए p, बाहर निकलने के लिए q/ESC",
+    stopAR: "AR सत्र बंद करें",
+    arRequirement: "कैमरा और AR एप्लिकेशन की आवश्यकता",
+    
+    // Buyer Signup
+    createAccount: "खाता बनाएं",
+    hasAccount: "पहले से खाता है?",
+    city: "शहर",
+    state: "राज्य",
   },
   
   ta: {
     // Common
+    welcomeTitle: 'கைவினைஞர் சந்தையில் வரவேற்கிறோம்',
     loginTitle: 'மீண்டும் வரவேற்கிறோம்',
     login: 'உள்நுழைவு',
     signup: 'பதிவு செய்க',
@@ -233,6 +276,12 @@ export const translations = {
     logout: 'வெளியேறு',
     loading: 'ஏற்றுகிறது...',
     buyer: "வாங்குபவர்",
+    loginAs: "உள்நுழையவும்",
+    loginAsSeller: "விற்பனையாளர் (கைவினைஞர்) ஆக உள்நுழையவும்",
+    loginAsBuyer: "வாங்குபவராக உள்நுழையவும்",
+    newUser: "புதிய பயனர்? பதிவு செய்க",
+    signupAsSeller: "விற்பனையாளர் (கைவினைஞர்) ஆக பதிவு செய்க",
+    signupAsBuyer: "வாங்குபவராக பதிவு செய்க",
     
     // Dashboard
     dashboard: 'டாஷ்போர்டு',
@@ -330,6 +379,20 @@ export const translations = {
     seasonalTrends: "பருவகால போக்குகள்",
     noInsightsAvailable: "எந்த நுண்ணறிவும் கிடைக்கவில்லை",
     startSellingToSeeInsights: "நுண்ணறிவைக் காண விற்பனையைத் தொடங்குங்கள்",
+    
+    // AR Try-On Features
+    tryInAR: "AR இல் முயற்சிக்கவும்",
+    startingAR: "AR தொடங்குகிறது...",
+    arSessionActive: "AR அமர்வு செயலில்",
+    arInstructions: "அளவை மாற்ற +/- பயன்படுத்தவும், புகைப்படத்திற்கு p, வெளியேற q/ESC",
+    stopAR: "AR அமர்வை நிறுத்தவும்",
+    arRequirement: "கேமரா மற்றும் AR பயன்பாட்டு தேவை",
+    
+    // Buyer Signup
+    createAccount: "கணக்கை உருவாக்கு",
+    hasAccount: "ஏற்கனவே கணக்கு உள்ளதா?",
+    city: "நகரம்",
+    state: "மாநிலம்",
   }
 };
 

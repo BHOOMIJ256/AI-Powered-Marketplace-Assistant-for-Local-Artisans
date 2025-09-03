@@ -23,27 +23,66 @@ export default async function Home() {
 
       {/* Main Content */}
       <main className="flex flex-col items-center justify-center min-h-[80vh] px-6">
-        <div className="text-center max-w-2xl">
+        <div className="text-center max-w-4xl">
           <h1 className="text-5xl font-bold text-gray-900 mb-6">
-            <TranslatedText translationKey="loginTitle" />
+            <TranslatedText translationKey="welcomeTitle" />
           </h1>
-          <p className="text-xl text-gray-600 mb-8">
+          <p className="text-xl text-gray-600 mb-12">
             Discover unique handmade products from local artisans and connect with talented craftspeople in your community.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/login"
-              className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-lg font-medium"
-            >
-              <TranslatedText translationKey="login" />
-            </Link>
-            <Link
-              href="/signup"
-              className="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-lg font-medium"
-            >
-              <TranslatedText translationKey="signup" />
-            </Link>
+          {/* Login Options */}
+          <div className="mb-12">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+              <TranslatedText translationKey="loginAs" />
+            </h2>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                href="/login/seller"
+                className="px-8 py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-lg font-medium flex items-center justify-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+                <TranslatedText translationKey="loginAsSeller" />
+              </Link>
+              <Link
+                href="/login/buyer"
+                className="px-8 py-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-lg font-medium flex items-center justify-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                </svg>
+                <TranslatedText translationKey="loginAsBuyer" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Signup Options */}
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+              <TranslatedText translationKey="newUser" />
+            </h2>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                href="/signup/seller"
+                className="px-8 py-4 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-lg font-medium flex items-center justify-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                <TranslatedText translationKey="signupAsSeller" />
+              </Link>
+              <Link
+                href="/signup/buyer"
+                className="px-8 py-4 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors text-lg font-medium flex items-center justify-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <TranslatedText translationKey="signupAsBuyer" />
+              </Link>
+            </div>
           </div>
           
           <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">

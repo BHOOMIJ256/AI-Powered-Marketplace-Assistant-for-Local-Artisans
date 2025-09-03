@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import LanguageSelector from "@/components/LanguageSelector";
 import TranslatedText from "@/components/TranslatedText";
+import ARTryOn from "@/components/ARTryOn";
 
 interface Product {
   id: string;
@@ -231,13 +232,21 @@ export default function BuyerPage() {
                           <TranslatedText translationKey="stock" />: {product.stock}
                         </span>
                       </div>
-                      <button
-                        onClick={() => addToCart(product)}
-                        disabled={product.stock === 0}
-                        className="w-full mt-3 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
-                      >
-                        <TranslatedText translationKey="addToCart" />
-                      </button>
+                      <div className="space-y-2">
+                        <button
+                          onClick={() => addToCart(product)}
+                          disabled={product.stock === 0}
+                          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                        >
+                          <TranslatedText translationKey="addToCart" />
+                        </button>
+                        
+                        {/* AR Try-On Feature - Always visible */}
+                        <ARTryOn 
+                          productImageUrl={product.imageUrl || ""} 
+                          productName={product.name}
+                        />
+                      </div>
                     </div>
                   </div>
                 ))}
