@@ -74,34 +74,51 @@ export default function BuyerLoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div
+    className="min-h-screen bg-cover bg-center relative"
+    style={{
+      backgroundImage:
+        "url('https://images.unsplash.com/photo-1658155058681-7a17cf3c42fd?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
+    }}>
+    {/* Dark overlay */}
+    <div className="absolute inset-0 bg-black opacity-40"></div>
+
+    {/* Page Content */}
+    <div className="relative z-10">
       {/* Header with Language Selector */}
       <header className="flex justify-between items-center p-6">
-        <Link href="/" className="text-2xl font-bold text-gray-800">
+        <Link href="/" className="text-2xl font-bold text-white">
           Artisan Marketplace
         </Link>
         <LanguageSelector />
       </header>
 
       <main className="flex items-center justify-center min-h-[80vh] px-6">
-        <div className="w-full max-w-md space-y-6">
+      <div className="w-full max-w-md space-y-6 p-6 rounded-2xl shadow-lg bg-[rgba(126,120,67,0.8)] translate-x-100">
           <div className="text-center">
             <h1 className="text-3xl font-semibold">
-              <TranslatedText translationKey="login" /> as <TranslatedText translationKey="buyer" />
+              <TranslatedText translationKey="login" /> as{" "}
+              <TranslatedText translationKey="buyer" />
             </h1>
-            <p className="text-sm text-gray-500 mt-2">Sign in to your buyer account</p>
+            <p className="text-sm text-gray-50 mt-2">
+              Sign in to your buyer account
+            </p>
           </div>
-          
+
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
               {error}
             </div>
           )}
-          
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="identifier" className="block text-sm font-medium text-gray-700 mb-1">
-                <TranslatedText translationKey="email" /> or <TranslatedText translationKey="phone" />
+              <label
+                htmlFor="identifier"
+                className="block text-sm font-medium text-gray-50 mb-1"
+              >
+                <TranslatedText translationKey="email" /> or{" "}
+                <TranslatedText translationKey="phone" />
               </label>
               <input
                 id="identifier"
@@ -113,9 +130,12 @@ export default function BuyerLoginPage() {
                 placeholder="Enter email or phone"
               />
             </div>
-            
+
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-50 mb-1"
+              >
                 <TranslatedText translationKey="password" />
               </label>
               <input
@@ -128,7 +148,7 @@ export default function BuyerLoginPage() {
                 placeholder="Enter password"
               />
             </div>
-            
+
             <button
               type="submit"
               disabled={loading}
@@ -137,23 +157,33 @@ export default function BuyerLoginPage() {
               {loading ? "Signing in..." : <TranslatedText translationKey="login" />}
             </button>
           </form>
-          
+
           <div className="text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-50">
               <TranslatedText translationKey="noAccount" />{" "}
-              <Link href="/signup/buyer" className="text-green-600 hover:underline">
+              <Link
+                href="/signup/buyer"
+                className="text-green-300 hover:underline"
+              >
                 <TranslatedText translationKey="signup" />
               </Link>
             </p>
           </div>
-          
+
           <div className="text-center">
-            <Link href="/login" className="text-sm text-gray-500 hover:text-gray-700">
+            <Link
+              href="/login"
+              className="text-sm text-gray-300 hover:text-gray-50"
+            >
               ← Back to login options
             </Link>
           </div>
         </div>
       </main>
+
+
     </div>
+  </div>
+
   );
 }
