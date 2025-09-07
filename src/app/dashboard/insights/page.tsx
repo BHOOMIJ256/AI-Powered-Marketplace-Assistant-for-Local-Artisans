@@ -85,20 +85,20 @@ export default function InsightsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6">
+      <div className="min-h-screen bg-amber-100 p-6">
         <div className="max-w-7xl mx-auto">
           <div className="animate-pulse">
-            <div className="h-8 bg-gray-200 rounded w-1/4 mb-6"></div>
+            <div className="h-8 bg-amber-200 rounded w-1/4 mb-6"></div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 bg-white rounded-lg shadow p-6">
-                <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
-                <div className="h-64 bg-gray-200 rounded"></div>
+                <div className="h-6 bg-amber-200 rounded w-1/3 mb-4"></div>
+                <div className="h-64 bg-amber-200 rounded"></div>
               </div>
               <div className="bg-white rounded-lg shadow p-6">
-                <div className="h-6 bg-gray-200 rounded w-1/2 mb-4"></div>
+                  <div className="h-6 bg-amber-200 rounded w-1/2 mb-4"></div>
                 <div className="space-y-3">
                   {[1, 2, 3].map((i) => (
-                    <div key={i} className="h-4 bg-gray-200 rounded w-full"></div>
+                      <div key={i} className="h-4 bg-amber-200 rounded w-full"></div>
                   ))}
                 </div>
               </div>
@@ -111,13 +111,13 @@ export default function InsightsPage() {
 
   if (!insights) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6">
+      <div className="min-h-screen bg-amber-100 p-6">
         <div className="max-w-7xl mx-auto text-center py-12">
-          <div className="text-gray-400 text-6xl mb-4">📊</div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">
+          <div className="text-amber-400 text-6xl mb-4">📊</div>
+          <h3 className="text-lg font-medium text-amber-800 mb-2">
             <TranslatedText translationKey="noInsightsAvailable" />
           </h3>
-          <p className="text-gray-600">
+          <p className="text-amber-600">
             <TranslatedText translationKey="startSellingToSeeInsights" />
           </p>
         </div>
@@ -126,15 +126,15 @@ export default function InsightsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-amber-100 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <h1 className="text-3xl font-bold text-amber-800 mb-2">
               <TranslatedText translationKey="customerInsights" />
             </h1>
-            <p className="text-gray-600">
+            <p className="text-amber-600">
               <TranslatedText translationKey="understandYourCustomers" />
             </p>
           </div>
@@ -151,10 +151,10 @@ export default function InsightsPage() {
                 </svg>
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">
+                  <p className="text-sm font-medium text-amber-800">
                   <TranslatedText translationKey="totalCustomers" />
                 </p>
-                <p className="text-2xl font-semibold text-gray-900">{insights.totalCustomers}</p>
+                <p className="text-2xl font-semibold text-amber-800">{insights.totalCustomers}</p>
               </div>
             </div>
           </div>
@@ -167,10 +167,10 @@ export default function InsightsPage() {
                 </svg>
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">
+                <p className="text-sm font-medium text-amber-800">
                   <TranslatedText translationKey="repeatCustomers" />
                 </p>
-                <p className="text-2xl font-semibold text-gray-900">{insights.repeatCustomers}</p>
+                <p className="text-2xl font-semibold text-amber-800">{insights.repeatCustomers}</p>
               </div>
             </div>
           </div>
@@ -183,10 +183,10 @@ export default function InsightsPage() {
                 </svg>
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">
+                <p className="text-sm font-medium text-amber-800">
                   <TranslatedText translationKey="averageOrderValue" />
                 </p>
-                <p className="text-2xl font-semibold text-gray-900">₹{insights.averageOrderValue}</p>
+                <p className="text-2xl font-semibold text-amber-800">₹{insights.averageOrderValue}</p>
               </div>
             </div>
           </div>
@@ -199,10 +199,10 @@ export default function InsightsPage() {
                 </svg>
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">
+                <p className="text-sm font-medium text-amber-800">
                   <TranslatedText translationKey="retentionRate" />
                 </p>
-                <p className="text-2xl font-semibold text-gray-900">
+                <p className="text-2xl font-semibold text-amber-800">
                   {Math.round((insights.repeatCustomers / insights.totalCustomers) * 100)}%
                 </p>
               </div>
@@ -215,10 +215,10 @@ export default function InsightsPage() {
           {/* Map */}
           <div className="lg:col-span-2 bg-white rounded-lg shadow-sm">
             <div className="px-6 py-4 border-b">
-              <h2 className="text-lg font-semibold">
+              <h2 className="text-lg font-semibold text-amber-800">
                 <TranslatedText translationKey="locationWiseDemand" />
               </h2>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-amber-800">
                 <TranslatedText translationKey="customerLocations" />
               </p>
             </div>
@@ -229,23 +229,23 @@ export default function InsightsPage() {
 
           {/* Top Products */}
           <div className="bg-white rounded-lg shadow-sm p-6">
-            <h2 className="text-lg font-semibold mb-4">
+            <h2 className="text-lg font-semibold mb-4 text-amber-800">
               <TranslatedText translationKey="topProducts" />
             </h2>
             <div className="space-y-4">
               {insights.topProducts.map((product, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div key={index} className="flex items-center justify-between p-3 bg-amber-50 rounded-lg">
                   <div className="flex items-center">
                     <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-sm font-medium text-blue-600">
                       {index + 1}
                     </div>
                     <div className="ml-3">
-                      <p className="text-sm font-medium text-gray-900">{product.name}</p>
-                      <p className="text-xs text-gray-500">{product.orders} orders</p>
+                      <p className="text-sm font-medium text-amber-800">{product.name}</p>
+                      <p className="text-xs text-amber-500">{product.orders} orders</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-semibold text-gray-900">₹{product.sales}</p>
+                    <p className="text-sm font-semibold text-amber-800">₹{product.sales}</p>
                   </div>
                 </div>
               ))}
@@ -257,23 +257,23 @@ export default function InsightsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
           {/* Top Regions */}
           <div className="bg-white rounded-lg shadow-sm p-6">
-            <h2 className="text-lg font-semibold mb-4">
+            <h2 className="text-lg font-semibold mb-4 text-amber-800">
               <TranslatedText translationKey="topRegions" />
             </h2>
             <div className="space-y-4">
               {insights.topRegions.map((region, index) => (
-                <div key={index} className="flex items-center justify-between">
+                <div key={index} className="flex items-center justify-between p-3 bg-amber-50 rounded-lg">
                   <div className="flex items-center">
                     <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center text-xs font-medium text-green-600">
                       {index + 1}
                     </div>
                     <div className="ml-3">
-                      <p className="text-sm font-medium text-gray-900">{region.region}</p>
-                      <p className="text-xs text-gray-500">{region.orders} orders</p>
+                      <p className="text-sm font-medium text-amber-800">{region.region}</p>
+                      <p className="text-xs text-amber-500">{region.orders} orders</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-semibold text-gray-900">₹{region.sales}</p>
+                    <p className="text-sm font-semibold text-amber-800">₹{region.sales}</p>
                   </div>
                 </div>
               ))}
@@ -282,22 +282,22 @@ export default function InsightsPage() {
 
           {/* Buyer Preferences */}
           <div className="bg-white rounded-lg shadow-sm p-6">
-            <h2 className="text-lg font-semibold mb-4">
+            <h2 className="text-lg font-semibold mb-4 text-amber-800">
               <TranslatedText translationKey="buyerPreferences" />
             </h2>
             
             {/* Price Range */}
             <div className="mb-6">
-              <h3 className="text-sm font-medium text-gray-700 mb-2">
+              <h3 className="text-sm font-medium text-amber-800 mb-2">
                 <TranslatedText translationKey="priceRange" />
               </h3>
-              <div className="bg-gray-50 p-3 rounded-lg">
+              <div className="bg-amber-50 p-3 rounded-lg">
                 <div className="flex justify-between text-sm">
                   <span>₹{insights.buyerPreferences.priceRange.min}</span>
                   <span className="font-medium">₹{insights.buyerPreferences.priceRange.avg} avg</span>
                   <span>₹{insights.buyerPreferences.priceRange.max}</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                <div className="w-full bg-amber-200 rounded-full h-2 mt-2">
                   <div 
                     className="bg-blue-600 h-2 rounded-full" 
                     style={{ 
@@ -311,14 +311,14 @@ export default function InsightsPage() {
 
             {/* Popular Categories */}
             <div className="mb-6">
-              <h3 className="text-sm font-medium text-gray-700 mb-2">
+                <h3 className="text-sm font-medium text-amber-800 mb-2">
                 <TranslatedText translationKey="popularCategories" />
               </h3>
               <div className="space-y-2">
                 {insights.buyerPreferences.popularCategories.map((category, index) => (
                   <div key={index} className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">{category.category}</span>
-                    <span className="text-sm font-medium text-gray-900">{category.count}</span>
+                    <span className="text-sm text-amber-600">{category.category}</span>
+                    <span className="text-sm font-medium text-amber-800">{category.count}</span>
                   </div>
                 ))}
               </div>
@@ -326,7 +326,7 @@ export default function InsightsPage() {
 
             {/* Seasonal Trends */}
             <div>
-              <h3 className="text-sm font-medium text-gray-700 mb-2">
+              <h3 className="text-sm font-medium text-amber-800 mb-2">
                 <TranslatedText translationKey="seasonalTrends" />
               </h3>
               <div className="flex items-end justify-between h-20">
@@ -336,7 +336,7 @@ export default function InsightsPage() {
                       className="bg-blue-500 rounded-t w-6 mb-1"
                       style={{ height: `${(trend.orders / Math.max(...insights.buyerPreferences.seasonalTrends.map(t => t.orders))) * 60}px` }}
                     ></div>
-                    <span className="text-xs text-gray-500">{trend.month}</span>
+                    <span className="text-xs text-amber-500">{trend.month}</span>
                   </div>
                 ))}
               </div>

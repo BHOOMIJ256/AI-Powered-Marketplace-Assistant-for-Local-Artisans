@@ -172,12 +172,12 @@ export default function BuyerPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-amber-100">
       {/* Header with Language Selector */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-amber-200 shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <h1 className="text-xl font-semibold text-gray-900">
+            <h1 className="text-xl font-semibold text-amber-900">
               <TranslatedText translationKey="shop" />
             </h1>
             <div className="flex items-center gap-4">
@@ -185,7 +185,7 @@ export default function BuyerPage() {
               <form action="/api/logout" method="post">
                 <button
                   type="submit"
-                  className="text-sm text-gray-600 hover:text-gray-900"
+                  className="text-sm text-amber-900 hover:text-amber-900"
                 >
                   <TranslatedText translationKey="logout" />
                 </button>
@@ -199,36 +199,36 @@ export default function BuyerPage() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Products Grid */}
           <div className="lg:col-span-3">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            <h2 className="text-2xl font-bold text-amber-900 mb-6">
               <TranslatedText translationKey="products" />
             </h2>
             
             {products.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-gray-500 text-lg">No products available at the moment.</p>
+                <p className="text-amber-500 text-lg">No products available at the moment.</p>
                 <p className="text-gray-400 text-sm mt-2">Check back later for new artisan products.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {products.map((product) => (
-                  <div key={product.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+                  <div key={product.id} className="bg-amber-200 rounded-lg shadow-md overflow-hidden">
                     <div className="h-48 bg-gray-200 flex items-center justify-center">
                       {product.imageUrl ? (
                         <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
                       ) : (
-                        <span className="text-gray-400">No image</span>
+                        <span className="text-amber-400">No image</span>
                       )}
                     </div>
                     <div className="p-4">
-                      <h3 className="font-semibold text-lg mb-2">{product.name}</h3>
+                      <h3 className="font-semibold text-lg mb-2 text-amber-900">{product.name}</h3>
                       {product.description && (
-                        <p className="text-gray-600 text-sm mb-3">{product.description}</p>
+                        <p className="text-amber-600 text-sm mb-3">{product.description}</p>
                       )}
                       <div className="flex items-center justify-between">
-                        <span className="text-lg font-bold text-green-600">
+                        <span className="text-lg font-bold text-amber-600">
                           ₹{(product.price / 100).toFixed(2)}
                         </span>
-                        <span className="text-sm text-gray-500">
+                        <span className="text-sm text-amber-500">
                           <TranslatedText translationKey="stock" />: {product.stock}
                         </span>
                       </div>
@@ -236,7 +236,7 @@ export default function BuyerPage() {
                         <button
                           onClick={() => addToCart(product)}
                           disabled={product.stock === 0}
-                          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                          className="w-full bg-amber-900 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
                         >
                           <TranslatedText translationKey="addToCart" />
                         </button>
@@ -256,37 +256,37 @@ export default function BuyerPage() {
 
           {/* Cart Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-md p-6 sticky top-8">
-              <h3 className="text-lg font-semibold mb-4">
+            <div className="bg-amber-200 rounded-lg shadow-md p-6 sticky top-8">
+              <h3 className="text-lg font-semibold mb-4 text-amber-900">
                 <TranslatedText translationKey="cart" />
               </h3>
               
               {cart.length === 0 ? (
-                <p className="text-gray-500 text-center py-8">
+                <p className="text-amber-500 text-center py-8">
                   <TranslatedText translationKey="cartEmpty" />
                 </p>
               ) : (
                 <>
-                  <div className="space-y-3 mb-4">
+                  <div className="space-y-3 mb-4 text-amber-900">
                     {cart.map((item) => (
                       <div key={item.id} className="flex items-center justify-between border-b pb-2">
                         <div className="flex-1">
                           <p className="font-medium text-sm">{item.name}</p>
-                          <p className="text-gray-600 text-sm">
+                          <p className="text-amber-600 text-sm">
                             ₹{(item.price / 100).toFixed(2)} × {item.quantity}
                           </p>
                         </div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 text-amber-900">
                           <button
                             onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                            className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-sm"
+                            className="w-6 h-6 rounded-full bg-amber-200 flex items-center justify-center text-sm"
                           >
                             -
                           </button>
                           <span className="w-8 text-center">{item.quantity}</span>
                           <button
                             onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                            className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-sm"
+                            className="w-6 h-6 rounded-full bg-amber-200 flex items-center justify-center text-sm"
                           >
                             +
                           </button>
@@ -295,19 +295,19 @@ export default function BuyerPage() {
                     ))}
                   </div>
                   
-                  <div className="border-t pt-4">
+                  <div className="border-t pt-4 text-amber-900">
                     <div className="flex justify-between items-center mb-4">
                       <span className="font-semibold">
                         <TranslatedText translationKey="total" />:
                       </span>
-                      <span className="text-lg font-bold text-green-600">
+                      <span className="text-lg font-bold text-amber-600">
                         ₹{(cartTotal / 100).toFixed(2)}
                       </span>
                     </div>
                     
                     <button
                       onClick={checkout}
-                      className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700"
+                      className="w-full bg-amber-600 text-white py-2 px-4 rounded-md hover:bg-amber-700"
                     >
                       <TranslatedText translationKey="placeOrder" />
                     </button>

@@ -1,48 +1,30 @@
-import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
+// src/app/api/logout/rout.ts
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function POST(req: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
-    const cookieStore = await cookies();
-    const userSession = cookieStore.get("session_user");
-    const buyerSession = cookieStore.get("session_buyer");
-
-    const response = NextResponse.json({ 
-      success: true, 
-      message: "Logged out successfully" 
+    const response = NextResponse.redirect(new URL('/', request.url));
+    
+    // Clear all session cookies
+    response.cookies.set('session_user', '', {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+      maxAge: 0, // Expire immediately
+    });
+    
+    response.cookies.set('session_buyer', '', {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+      maxAge: 0, // Expire immediately
     });
 
-    // Clear both session cookies
-    if (userSession) {
-      response.cookies.set("session_user", "", {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge: 0,
-        expires: new Date(0)
-      });
-    }
-
-    if (buyerSession) {
-      response.cookies.set("session_buyer", "", {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        maxAge: 0,
-        expires: new Date(0)
-      });
-    }
-
     return response;
-
   } catch (error) {
-    console.error("Logout error:", error);
-    return NextResponse.json({ success: false, message: "Logout failed" }, { status: 500 });
+    console.error('Logout error:', error);
+    return NextResponse.redirect(new URL('/', request.url));
   }
 }
-
-export async function GET(_req: NextRequest) {
-  const res = NextResponse.json({ success: true, message: "Logged out" });
-  res.cookies.set("session_user", "", { httpOnly: true, path: "/", maxAge: 0 });
-  return res;
-} 

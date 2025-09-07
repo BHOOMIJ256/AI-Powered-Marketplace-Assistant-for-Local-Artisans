@@ -177,6 +177,37 @@ body {
   animation: spin 1s linear infinite;
 }
 
+@keyframes fade-in-scale {
+  0% { opacity: 0; transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.animate-fade-in-scale {
+  animation: fade-in-scale 1s ease-out forwards;
+}
+
+@keyframes fade-in {
+  to { opacity: 0.3; }
+}
+
+.animate-fade-in {
+  animation: fade-in 1.2s ease forwards;
+}
+
+@keyframes fade-in-up {
+  0% { opacity: 0; transform: translateY(40px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 1s ease-out forwards;
+}
+
+.delay-200 {
+  animation-delay: 0.2s;
+}
+
+
 /* Input placeholder styling */
 .floating-card input::placeholder,
 .stable-card input::placeholder {

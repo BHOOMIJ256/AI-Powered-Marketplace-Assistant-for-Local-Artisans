@@ -16,10 +16,10 @@ export default async function OrdersListPage() {
   });
 
   return (
-    <div className="min-h-screen p-6">
+    <div className="min-h-screen p-6 bg-amber-100">
       <div className="max-w-4xl mx-auto space-y-4">
-        <h1 className="text-2xl font-semibold">Orders</h1>
-        <div className="border rounded-md divide-y">
+        <h1 className="text-2xl font-semibold text-amber-800">Orders</h1>
+        <div className="border rounded-md divide-y border-amber-800">
           {orders.length === 0 && (
             <div className="p-4 text-sm text-gray-500">No orders yet.</div>
           )}
