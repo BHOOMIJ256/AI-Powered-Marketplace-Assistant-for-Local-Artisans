@@ -13,10 +13,10 @@ export default async function LoginPage() {
   if (buyerSession) redirect("/buyer");
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-amber-100 from-blue-50 to-indigo-100">
       {/* Header with Language Selector */}
       <header className="flex justify-between items-center p-6">
-        <Link href="/" className="text-2xl font-bold text-gray-800">
+        <Link href="/" className="text-2xl text-amber-900 font-bold">
           Artisan Marketplace
         </Link>
         <LanguageSelector />
@@ -25,7 +25,7 @@ export default async function LoginPage() {
       <main className="flex items-center justify-center min-h-[80vh] px-6">
         <div className="w-full max-w-md space-y-6">
           <div className="text-center">
-            <h1 className="text-3xl font-semibold">
+            <h1 className="text-3xl text-amber-900 font-semibold">
               <TranslatedText translationKey="loginTitle" />
             </h1>
             <p className="text-sm text-gray-500 mt-2">Choose your account type to sign in</p>

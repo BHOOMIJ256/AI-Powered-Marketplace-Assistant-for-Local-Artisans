@@ -33,13 +33,13 @@ export default async function ProductsManagePage() {
                 <div key={p.id} className="border rounded-md p-3">
                   <div className="h-32 bg-foreground/5 rounded" />
                   <div className="mt-2">
-                    <h3 className="font-medium">{p.name}</h3>
-                    <p className="text-sm text-gray-500">₹{(p.price/100).toFixed(2)} · <TranslatedText translationKey="stock" />: {p.stock}</p>
+                    <h3 className="font-medium text-amber-900">{p.name}</h3>
+                    <p className="text-sm text-amber-500">₹{(p.price/100).toFixed(2)} · <TranslatedText translationKey="stock" />: {p.stock}</p>
                   </div>
                 </div>
               ))}
               {products.length === 0 && (
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-amber-500">
                   <TranslatedText translationKey="noProducts" />
                 </p>
               )}
