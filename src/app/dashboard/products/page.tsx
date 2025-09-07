@@ -13,11 +13,11 @@ export default async function ProductsManagePage() {
   const products = await db.product.findMany({ where: { artisanId: userId }, orderBy: { createdAt: "desc" } });
 
   return (
-    <div className="min-h-screen p-6">
+    <div className="min-h-screen p-6 bg-amber-100">
       <div className="max-w-5xl mx-auto">
         {/* Header with Language Selector */}
         <header className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-semibold">
+          <h1 className="text-2xl font-semibold text-amber-800">
             <TranslatedText translationKey="manageProducts" />
           </h1>
           <LanguageSelector />
@@ -25,7 +25,7 @@ export default async function ProductsManagePage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <section className="lg:col-span-2 space-y-3">
-            <h2 className="text-xl font-medium">
+            <h2 className="text-xl font-medium text-amber-800">
               <TranslatedText translationKey="products" />
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -47,7 +47,7 @@ export default async function ProductsManagePage() {
           </section>
 
           <section className="space-y-3">
-            <h2 className="text-xl font-medium">
+            <h2 className="text-xl font-medium text-amber-800 border-b border-amber-800">
               <TranslatedText translationKey="addProduct" />
             </h2>
             <AddProductForm />
