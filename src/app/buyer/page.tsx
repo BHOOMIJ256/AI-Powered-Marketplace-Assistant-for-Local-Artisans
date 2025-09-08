@@ -295,7 +295,7 @@ export default function BuyerPage() {
                     ))}
                   </div>
                   
-                  <div className="border-t pt-4 text-amber-900">
+                  <div className="border-t pt-4">
                     <div className="flex justify-between items-center mb-4">
                       <span className="font-semibold">
                         <TranslatedText translationKey="total" />:
