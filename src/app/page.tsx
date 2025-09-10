@@ -69,37 +69,64 @@ export default function Home() {
       <div className="pointer-events-none absolute inset-0 z-0 bg-gradient-to-b from-white/60 via-transparent to-amber-900/0" />
 
       {/* Navbar */}
-      <nav className="relative z-10 mx-auto flex w-full items-center justify-between px-6 py-4  bg-amber-900/20   ">
-        <div className="text-5xl font-bold tracking-wide text-amber-900 drop-shadow-md" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
-          ARTISAN
-        </div>
-        <div className="flex flex-1 items-center justify-center px-7">
-          <div className="w-full max-w-xl rounded-full bg-amber-900/85 px-6 py-2 backdrop-blur-md ring-1 ring-white/20 object-cover transform transition-transform duration-700 ease-out hover:scale-110 filter sepia-[0.3] saturate-75">
-            <input
-              type="text"
-              placeholder="search"
-              className="w-full bg-transparent text-2xl tracking-wide text-white placeholder-white/90 outline-none"
-            />
-          </div>
-        </div>
-        <div className="hidden gap-4 md:flex">
-          <Link
-            href="/"
-            className="rounded-full bg-amber-900/90 px-6 py-2 text-lg font-semibold text-white 
-             hover:bg-amber-800/80 transition-colors duration-300 ease-in-out object-cover transform transition-transform duration-700 ease-out hover:scale-110 filter sepia-[0.3] saturate-75 "
-          >
-            HOME
-          </Link>
+      <nav className="sticky top-0 z-20 mx-auto flex w-full items-center justify-between px-10 py-4 
+  bg-gradient-to-r from-amber-900/85 via-amber-800/80 to-amber-900/85 
+  backdrop-blur-md shadow-md border-b border-amber-950/40">
 
-          <Link href="/about" className="rounded-full bg-amber-900/90 px-6 py-2 text-lg font-semibold text-white hover:bg-amber-800/80 transition-colors object-cover transform transition-transform duration-700 ease-out hover:scale-110 filter sepia-[0.3] saturate-75"><TranslatedText translationKey="ABOUT" /></Link>
-          <Link href="/login" className="rounded-full bg-amber-900/90 px-6 py-2 text-lg font-semibold text-white hover:bg-amber-800/80 transition-color object-cover transform transition-transform duration-700 ease-out hover:scale-110 filter sepia-[0.3] saturate-75">LOGIN</Link>
-          <Link href="/signup" className="rounded-full bg-amber-900/90 px-6 py-2 text-lg font-semibold text-white hover:bg-amber-800/80 transition-colors object-cover transform transition-transform duration-700 ease-out hover:scale-110 filter sepia-[0.3] saturate-75">SIGN UP</Link>
-          <Link href="#contact" className="rounded-full bg-amber-900/90 px-6 py-2 text-lg font-semibold text-white hover:bg-amber-800/80 transition-colors object-cover transform transition-transform duration-700 ease-out hover:scale-110 filter sepia-[0.3] saturate-75">CONTACT</Link>
-          
-          <LanguageSelector />
+  {/* Brand / Logo */}
+  <div 
+    className="text-4xl font-extrabold tracking-wider text-amber-100 drop-shadow-md 
+               hover:scale-[1.05] transition-transform duration-500 ease-out" 
+    style={{ fontFamily: 'Cinzel Decorative, Cormorant Garamond, serif' }}
+  >
+    ARTISAN
+  </div>
 
-        </div>
-      </nav>
+  {/* Nav Links */}
+  <div className="hidden gap-4 md:flex items-center">
+    {[ 
+      { href: "/", label: "HOME" },
+      { href: "/about", label: "ABOUT" },
+      { href: "#contact", label: "CONTACT" },
+    ].map((item) => (
+      <Link
+        key={item.href}
+        href={item.href}
+        className="px-4 py-2 text-amber-100 tracking-wide font-medium 
+                   transition-all duration-300 hover:text-amber-300"
+      >
+        {item.label}
+      </Link>
+    ))}
+
+    {/* Login & Signup */}
+    <Link
+      href="/login"
+      className="px-4 py-2 border border-[#c9a86a] text-[#f0e68c] 
+                 rounded-md font-medium shadow-sm transition-all duration-300 
+                 hover:bg-[#f0e68c] hover:text-[#5c3317] hover:scale-105"
+    >
+      Login
+    </Link>
+    <Link
+      href="/signup"
+      className="px-4 py-2 border border-[#c9a86a] text-[#f0e68c] 
+                 rounded-md font-medium shadow-sm transition-all duration-300 
+                 hover:bg-[#f0e68c] hover:text-[#5c3317] hover:scale-105"
+    >
+      Sign Up
+    </Link>
+
+    {/* Language Selector on extreme right */}
+    <div className="ml-4">
+      <LanguageSelector />
+    </div>
+  </div>
+</nav>
+
+
+
+
       <div className="absolute text-3xl font-bold text-cream-100 tracking-widest" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
         {/* <h1 className="text-5xl font-bold text-gray-900 mb-6 text-center ">
             <TranslatedText translationKey="welcomeTitle" />
