@@ -46,4 +46,5 @@ next-env.d.ts
 *.sqlite
 .env
 .env.local
-.google-credentials.json
+"google-credentials.json" 
+"*.json"  
