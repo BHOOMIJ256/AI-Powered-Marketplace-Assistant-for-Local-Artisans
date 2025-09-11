@@ -3,8 +3,15 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Cormorant_Garamond } from "next/font/google";
 import LanguageSelector from "@/components/LanguageSelector";
 import TranslatedText from "@/components/TranslatedText";
+
+const cormorant = Cormorant_Garamond({
+  weight: ["300", "400", "500", "600", "700"],
+  subsets: ["latin"],
+  display: "swap",
+});
 
 export default function SellerLoginPage() {
   const [identifier, setIdentifier] = useState("");
@@ -20,14 +27,13 @@ export default function SellerLoginPage() {
 
   const checkAuth = async () => {
     try {
-      // Check if user is already logged in
       const res = await fetch("/api/auth/check");
       if (res.ok) {
         const data = await res.json();
         if (data.authenticated) {
-          if (data.role === 'artisan') {
+          if (data.role === "artisan") {
             router.push("/dashboard");
-          } else if (data.role === 'buyer') {
+          } else if (data.role === "buyer") {
             router.push("/buyer");
           }
           return;
@@ -57,7 +63,6 @@ export default function SellerLoginPage() {
       const data = await res.json();
 
       if (res.ok) {
-        // Redirect to dashboard on success
         router.push("/dashboard");
       } else {
         setError(data.message || "Login failed");
@@ -69,92 +74,254 @@ export default function SellerLoginPage() {
     }
   };
 
+  const getColumnImages = (columnIndex: number) => {
+    const imagesPerColumn = 10;
+    const startIndex = columnIndex * imagesPerColumn + 1;
+
+    return Array.from({ length: 20 }, (_, i) => {
+      const imageIndex = startIndex + (i % imagesPerColumn);
+      return `/images/grid/${imageIndex}.png`;
+    });
+  };
+
   if (checkingAuth) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p><TranslatedText translationKey="loading" /></p>
+      <div
+        className={`min-h-screen flex items-center justify-center ${cormorant.className}`}
+      >
+        <p style={{ color: "#8b4513", fontSize: "1.125rem" }}>
+          <TranslatedText translationKey="loading" />
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      {/* Header with Language Selector */}
-      <header className="flex justify-between items-center p-6">
-        <Link href="/" className="text-2xl font-bold text-gray-800">
-          Artisan Marketplace
-        </Link>
-        <LanguageSelector />
-      </header>
+    <div
+      className={`min-h-screen overflow-hidden relative ${cormorant.className}`}
+    >
+      {/* Animated Grid Background */}
+      <div className="fixed inset-0 grid grid-cols-5 gap-4 p-4">
+        {[0, 1, 2, 3, 4].map((columnIndex) => (
+          <div
+            key={columnIndex}
+            className={`flex flex-col gap-4 ${
+              columnIndex % 2 === 0 ? "animate-scroll-down" : "animate-scroll-up"
+            }`}
+          >
+            {getColumnImages(columnIndex).map((imageSrc, imageIndex) => (
+              <div
+                key={`${columnIndex}-${imageIndex}`}
+                className="w-full aspect-square rounded-2xl overflow-hidden shadow-lg flex-shrink-0"
+                style={{
+                  minHeight: "200px",
+                  backgroundColor: "#f5f1eb",
+                }}
+              >
+                <img
+                  src={imageSrc}
+                  alt={`Grid image ${imageIndex + 1}`}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = "none";
+                    target.parentElement!.style.background = `linear-gradient(135deg, 
+                      hsl(${30 + (columnIndex * 20 + imageIndex * 15) % 60}, 25%, 75%), 
+                      hsl(${40 + (columnIndex * 20 + imageIndex * 15) % 60}, 30%, 80%))`;
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
 
-      <main className="flex items-center justify-center min-h-[80vh] px-6">
-        <div className="w-full max-w-md space-y-6">
-          <div className="text-center">
-            <h1 className="text-3xl font-semibold">
-              <TranslatedText translationKey="login" /> as Seller (Artisan)
-            </h1>
-            <p className="text-sm text-gray-500 mt-2">Sign in to your artisan account</p>
-          </div>
-          
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-              {error}
-            </div>
-          )}
-          
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="identifier" className="block text-sm font-medium text-gray-700 mb-1">
-                <TranslatedText translationKey="email" /> or <TranslatedText translationKey="phone" />
-              </label>
-              <input
-                id="identifier"
-                type="text"
-                value={identifier}
-                onChange={(e) => setIdentifier(e.target.value)}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter email or phone"
-              />
-            </div>
-            
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                <TranslatedText translationKey="password" />
-              </label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter password"
-              />
-            </div>
-            
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors disabled:bg-blue-400"
+      {/* Replaced with your Gradient Navbar */}
+      <nav
+        className="sticky top-0 z-20 mx-auto flex w-full items-center justify-between px-10 py-4 
+        bg-gradient-to-r from-amber-900/85 via-amber-800/80 to-amber-900/85 
+        backdrop-blur-md shadow-md border-b border-amber-950/40"
+      >
+        <Link
+          href="/"
+          className="text-4xl font-extrabold tracking-wider text-amber-100 drop-shadow-md 
+                     hover:scale-[1.05] transition-transform duration-500 ease-out"
+          style={{ fontFamily: "Cinzel Decorative, Cormorant Garamond, serif" }}
+        >
+          ARTISAN
+        </Link>
+
+        <div className="hidden gap-4 md:flex items-center">
+          {[
+            { href: "/", label: "HOME" },
+            { href: "/about", label: "ABOUT" },
+            { href: "#contact", label: "CONTACT" },
+          ].map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="px-4 py-2 text-amber-100 tracking-wide font-medium 
+                         transition-all duration-300 hover:text-amber-300"
             >
-              {loading ? "Signing in..." : <TranslatedText translationKey="login" />}
-            </button>
-          </form>
-          
-          <div className="text-center">
-            <p className="text-sm text-gray-600">
-              <TranslatedText translationKey="noAccount" />{" "}
-              <Link href="/signup/seller" className="text-blue-600 hover:underline">
-                <TranslatedText translationKey="signup" />
-              </Link>
-            </p>
-          </div>
-          
-          <div className="text-center">
-            <Link href="/login" className="text-sm text-gray-500 hover:text-gray-700">
-              ← Back to login options
+              {item.label}
             </Link>
+          ))}
+
+          <Link
+            href="/login"
+            className="px-4 py-2 border border-[#c9a86a] text-[#f0e68c] 
+                       rounded-md font-medium shadow-sm transition-all duration-300 
+                       hover:bg-[#f0e68c] hover:text-[#5c3317] hover:scale-105"
+          >
+            <TranslatedText translationKey="login" />
+          </Link>
+          <Link
+            href="/signup"
+            className="px-4 py-2 border border-[#c9a86a] text-[#f0e68c] 
+                       rounded-md font-medium shadow-sm transition-all duration-300 
+                       hover:bg-[#f0e68c] hover:text-[#5c3317] hover:scale-105"
+          >
+            <TranslatedText translationKey="Signup" />
+          </Link>
+
+          <div className="ml-4">
+            <LanguageSelector />
+          </div>
+        </div>
+      </nav>
+
+      {/* Main Content */}
+      <main className="relative z-10 flex items-center justify-end min-h-screen px-6 pr-12 pt-28">
+        <div className="w-full max-w-lg">
+          <div
+            className="stable-card rounded-3xl p-10 shadow-2xl border"
+            style={{
+              backgroundColor: "rgba(250, 248, 245, 0.98)",
+              borderColor: "#d4c4a8",
+              boxShadow: "0 25px 50px -12px rgba(139, 69, 19, 0.25)",
+            }}
+          >
+            <div className="text-center mb-8">
+              <h1
+                className="font-bold mb-3"
+                style={{
+                  color: "#8b4513",
+                  fontSize: "2.5rem",
+                }}
+              >
+                <TranslatedText translationKey="login" /> as Seller (Artisan)
+              </h1>
+              <p
+                style={{
+                  color: "#a0522d",
+                  fontSize: "1.175rem",
+                  fontWeight: "bold",
+                }}
+              >
+                Sign in to your artisan account
+              </p>
+            </div>
+
+            {error && (
+              <div
+                className="border px-4 py-3 rounded-2xl mb-6"
+                style={{
+                  backgroundColor: "#fdf2f2",
+                  borderColor: "#fecaca",
+                  color: "#b91c1c",
+                  fontSize: "1rem",
+                }}
+              >
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label
+                  htmlFor="identifier"
+                  className="block font-bold mb-3"
+                  style={{ color: "#8b4513", fontSize: "1.125rem" }}
+                >
+                  <TranslatedText translationKey="email" /> or{" "}
+                  <TranslatedText translationKey="phone" />
+                </label>
+                <input
+                  id="identifier"
+                  type="text"
+                  value={identifier}
+                  onChange={(e) => setIdentifier(e.target.value)}
+                  required
+                  className="w-full px-5 py-4 border-0 rounded-2xl focus:outline-none focus:ring-2 transition-all duration-200"
+                  style={{
+                    backgroundColor: "#f5f1eb",
+                    color: "#8b4513",
+                    fontSize: "1rem",
+                  }}
+                  placeholder="Enter email or phone"
+                />
+              </div>
+
+              <div>
+                <label
+                  htmlFor="password"
+                  className="block font-bold mb-3"
+                  style={{ color: "#8b4513", fontSize: "1.125rem" }}
+                >
+                  <TranslatedText translationKey="password" />
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="w-full px-5 py-4 border-0 rounded-2xl focus:outline-none focus:ring-2 transition-all duration-200"
+                  style={{
+                    backgroundColor: "#f5f1eb",
+                    color: "#8b4513",
+                    fontSize: "1rem",
+                  }}
+                  placeholder="Enter password"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full text-white py-4 px-6 rounded-2xl transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]"
+                style={{
+                  background:
+                    "linear-gradient(135deg, #d2691e 0%, #cd853f 100%)",
+                  fontSize: "1.125rem",
+                }}
+              >
+                {loading ? "Signing in..." : <TranslatedText translationKey="login" />}
+              </button>
+            </form>
+
+            <div className="text-center mt-6">
+              <p style={{ color: "#a0522d", fontSize: "1rem" }}>
+                <TranslatedText translationKey="noAccount" />{" "}
+                <Link
+                  href="/signup/seller"
+                  className="font-semibold hover:underline transition-colors"
+                  style={{ color: "#8b4513", fontSize: "1rem" }}
+                >
+                  <TranslatedText translationKey="signup" />
+                </Link>
+              </p>
+            </div>
+
+            <div className="text-center mt-4">
+              <Link
+                href="/login"
+                className="font-medium transition-colors"
+                style={{ color: "#a0522d", fontSize: "0.875rem" }}
+              >
+                ← Back to login options
+              </Link>
+            </div>
           </div>
         </div>
       </main>

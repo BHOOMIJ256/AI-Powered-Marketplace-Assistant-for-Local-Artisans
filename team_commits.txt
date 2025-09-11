@@ -1,0 +1,15 @@
+6b00d92 Added Nav bar fixed minor issues
+74c2234 Pulling the branch and merging with 0 conflicts
+b1f158c Updated Buyer page
+daf4ae1 about page
+a1f4bd6 Merge branch 'team-working-branch' of https://github.com/BHOOMIJ256/AI-Powered-Marketplace-Assistant-for-Local-Artisans into team-working-branch
+7a0c1c7 Style login and signup pages
+2565c6c Style login and signup pages
+cda7d59 Style buyer page
+155519a Changed dashboard styling and fixed minor issues
+e5f02dc Merge branch 'team-working-branch' of https://github.com/BHOOMIJ256/AI-Powered-Marketplace-Assistant-for-Local-Artisans into team-working-branch
+caf2c59 Fix sign up issue by bhoomi
+5066cd0  added public file
+21a7809 Home page
+e67a21c modify json
+50bd1fd Modified login page

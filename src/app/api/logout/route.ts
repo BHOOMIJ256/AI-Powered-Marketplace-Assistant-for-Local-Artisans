@@ -1,9 +1,10 @@
+// src/app/api/logout/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
     const response = NextResponse.redirect(new URL('/', request.url));
-    
+
     // Clear all session cookies
     response.cookies.set('session_user', '', {
       httpOnly: true,
@@ -12,7 +13,7 @@ export async function POST(request: NextRequest) {
       path: '/',
       maxAge: 0, // Expire immediately
     });
-    
+
     response.cookies.set('session_buyer', '', {
       httpOnly: true,
       sameSite: 'lax',

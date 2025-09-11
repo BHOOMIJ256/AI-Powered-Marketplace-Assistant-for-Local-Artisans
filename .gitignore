@@ -50,3 +50,6 @@ next-env.d.ts
 "*.json"  
 "google-credentials.json" 
 "*.json"  
+google-credentials.json 
+src/app/api/__pycache__/ 
+__pycache__/ 
