@@ -69,16 +69,6 @@ export default async function DashboardPage() {
             {/* Language + Logout */}
             <div className="flex items-center gap-4">
               <LanguageSelector />
-
-              <form action="/api/logout" method="post">
-                <button
-                  type="submit"
-                  className="bg-[#f0e68c] text-[#5c3317] border border-[#8B4513] 
-                            px-3 py-2 rounded-md hover:bg-[#e6da82] transition"
-                >
-                  <TranslatedText translationKey="logout" />
-                </button>
-              </form>
             </div>
           </div>
         </div>
@@ -87,6 +77,7 @@ export default async function DashboardPage() {
 
 
       {/* Dashboard Content */}
+      
       <div className="w-full px-6 py-8 space-y-8">
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

@@ -3,15 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Cormorant_Garamond } from 'next/font/google';
 import LanguageSelector from "@/components/LanguageSelector";
 import TranslatedText from "@/components/TranslatedText";
-
-const cormorant = Cormorant_Garamond({
-  weight: ['300', '400', '500', '600', '700'],
-  subsets: ['latin'],
-  display: 'swap',
-});
 
 export default function BuyerLoginPage() {
   const [identifier, setIdentifier] = useState("");
@@ -27,7 +20,6 @@ export default function BuyerLoginPage() {
 
   const checkAuth = async () => {
     try {
-      // Check if user is already logged in as buyer
       const res = await fetch("/api/buyer/check-auth");
       if (res.ok) {
         const data = await res.json();
@@ -60,7 +52,6 @@ export default function BuyerLoginPage() {
       const data = await res.json();
 
       if (res.ok) {
-        // Redirect to buyer page on success
         router.push("/buyer");
       } else {
         setError(data.message || "Login failed");
@@ -72,13 +63,9 @@ export default function BuyerLoginPage() {
     }
   };
 
-  // Fixed function to properly distribute 50 images across 5 columns
   const getColumnImages = (columnIndex: number) => {
-    // Distribute 50 images across 5 columns (10 images per column)
     const imagesPerColumn = 10;
     const startIndex = columnIndex * imagesPerColumn + 1;
-    
-    // Create array with 20 items (duplicating for smooth infinite scroll)
     return Array.from({ length: 20 }, (_, i) => {
       const imageIndex = startIndex + (i % imagesPerColumn);
       return `/images/grid/${imageIndex}.png`;
@@ -87,8 +74,8 @@ export default function BuyerLoginPage() {
 
   if (checkingAuth) {
     return (
-      <div className={`min-h-screen flex items-center justify-center ${cormorant.className}`}>
-        <p style={{ color: '#8b4513', fontSize: '1.125rem' }}>
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-lg text-amber-900">
           <TranslatedText translationKey="loading" />
         </p>
       </div>
@@ -96,36 +83,30 @@ export default function BuyerLoginPage() {
   }
 
   return (
-    <div className={`min-h-screen overflow-hidden relative ${cormorant.className}`}>
-      {/* Animated Grid Background */}
+    <div className="min-h-screen overflow-hidden relative font-sans">
+      {/* Background grid */}
       <div className="fixed inset-0 grid grid-cols-5 gap-4 p-4">
         {[0, 1, 2, 3, 4].map((columnIndex) => (
           <div
             key={columnIndex}
             className={`flex flex-col gap-4 ${
-              columnIndex % 2 === 0 ? 'animate-scroll-down' : 'animate-scroll-up'
+              columnIndex % 2 === 0 ? "animate-scroll-down" : "animate-scroll-up"
             }`}
           >
             {getColumnImages(columnIndex).map((imageSrc, imageIndex) => (
               <div
                 key={`${columnIndex}-${imageIndex}`}
-                className="w-full aspect-square rounded-2xl overflow-hidden shadow-lg flex-shrink-0"
-                style={{ 
-                  minHeight: '200px',
-                  backgroundColor: '#f5f1eb' // Light brown background
-                }}
+                className="w-full aspect-square rounded-2xl overflow-hidden shadow-lg flex-shrink-0 bg-amber-50"
               >
                 <img
                   src={imageSrc}
                   alt={`Grid image ${imageIndex + 1}`}
                   className="w-full h-full object-cover"
                   onError={(e) => {
-                    // Fallback to a gradient background if image fails to load
                     const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                    target.parentElement!.style.background = `linear-gradient(135deg, 
-                      hsl(${30 + (columnIndex * 20 + imageIndex * 15) % 60}, 25%, 75%), 
-                      hsl(${40 + (columnIndex * 20 + imageIndex * 15) % 60}, 30%, 80%))`;
+                    target.style.display = "none";
+                    target.parentElement!.style.background =
+                      "linear-gradient(135deg, #f5deb3, #f0e68c)";
                   }}
                 />
               </div>
@@ -134,96 +115,90 @@ export default function BuyerLoginPage() {
         ))}
       </div>
 
-      {/* Ultra Compact Fixed Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 w-full">
-        <div 
-          className="flex justify-between items-center px-4 py-2 border-b"
-          style={{
-            backgroundColor: 'rgba(250, 248, 245, 0.95)',
-            borderBottomColor: '#d4c4a8',
-            backdropFilter: 'blur(10px)',
-            minHeight: '60px' // Fixed compact height
-          }}
+      {/* Navbar (from old page) */}
+      <nav className="sticky top-0 z-50 mx-auto flex w-full items-center justify-between px-10 py-4 
+        bg-gradient-to-r from-amber-900/85 via-amber-800/80 to-amber-900/85 
+        backdrop-blur-md shadow-md border-b border-amber-950/40">
+        
+        {/* Brand / Logo */}
+        <Link
+          href="/"
+          className="text-4xl font-extrabold tracking-wider text-amber-100 drop-shadow-md 
+                     hover:scale-[1.05] transition-transform duration-500 ease-out"
+          style={{ fontFamily: "Cinzel Decorative, serif" }}
         >
-          <Link 
-            href="/" 
-            className="text-2xl font-bold transition-colors hover:opacity-80"
-            style={{ color: '#8b4513' }}
+          ARTISAN
+        </Link>
+
+        {/* Nav Links */}
+        <div className="hidden gap-4 md:flex items-center">
+          {[
+            { href: "/", label: "HOME" },
+            { href: "/about", label: "ABOUT" },
+            { href: "#contact", label: "CONTACT" },
+          ].map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="px-4 py-2 text-amber-100 tracking-wide font-medium 
+                         transition-all duration-300 hover:text-amber-300"
+            >
+              {item.label}
+            </Link>
+          ))}
+
+          {/* Login & Signup */}
+          <Link
+            href="/login"
+            className="px-4 py-2 border border-[#c9a86a] text-[#f0e68c] 
+                       rounded-md font-medium shadow-sm transition-all duration-300 
+                       hover:bg-[#f0e68c] hover:text-[#5c3317] hover:scale-105"
           >
-            Artisan Marketplace
+            <TranslatedText translationKey="login" />
           </Link>
-          <div 
-            className="rounded-full px-3 py-1.5"
-            style={{
-              backgroundColor: 'rgba(139, 69, 19, 0.1)',
-              border: '1px solid rgba(139, 69, 19, 0.2)'
-            }}
+          <Link
+            href="/signup"
+            className="px-4 py-2 border border-[#c9a86a] text-[#f0e68c] 
+                       rounded-md font-medium shadow-sm transition-all duration-300 
+                       hover:bg-[#f0e68c] hover:text-[#5c3317] hover:scale-105"
           >
+            <TranslatedText translationKey="signup" />
+          </Link>
+
+          {/* Language Selector */}
+          <div className="ml-4">
             <LanguageSelector />
           </div>
         </div>
-      </header>
+      </nav>
 
-      {/* Main Content - Adjusted for ultra compact fixed header with extra spacing */}
+      {/* Main */}
       <main className="relative z-10 flex items-center justify-end min-h-screen px-6 pr-12 pt-28">
         <div className="w-full max-w-lg">
-          {/* Static Card - No Floating Animation */}
-          <div 
-            className="stable-card rounded-3xl p-10 shadow-2xl border"
-            style={{
-              backgroundColor: 'rgba(250, 248, 245, 0.98)', // More opaque cream background
-              borderColor: '#d4c4a8', // Light brown border
-              boxShadow: '0 25px 50px -12px rgba(139, 69, 19, 0.25)' // Stronger brown shadow
-            }}
-          >
-            <div className="text-center mb-8">
-              <h1 
-                className="font-bold mb-3"
-                style={{ 
-                  color: '#8b4513',
-                  fontSize: '2.5rem' // Increased font size
-                }}
-              >
+          <div className="rounded-3xl p-8 shadow-xl border bg-[rgba(250,248,245,0.98)] border-amber-200">
+            <div className="text-center mb-6">
+              <h1 className="text-3xl font-bold text-amber-900 mb-2">
                 <TranslatedText translationKey="login" /> as{" "}
                 <TranslatedText translationKey="buyer" />
               </h1>
-              <p 
-                className=""
-                style={{ 
-                  color: '#a0522d',
-                  fontSize: '1.175rem', // Increased font size
-                  fontWeight: 'bold'
-                }}
-              >
+              <p className="text-base font-medium text-amber-700">
                 Sign in to your buyer account
               </p>
             </div>
-            
+
             {error && (
-              <div 
-                className="border px-4 py-3 rounded-2xl mb-6"
-                style={{
-                  backgroundColor: '#fdf2f2',
-                  borderColor: '#fecaca',
-                  color: '#b91c1c',
-                  fontSize: '1rem'
-                }}
-              >
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-2 rounded-xl text-sm mb-6">
                 {error}
               </div>
             )}
-            
-            <form onSubmit={handleSubmit} className="space-y-6">
+
+            <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <label 
-                  htmlFor="identifier" 
-                  className="block font-bold mb-3"
-                  style={{ 
-                    color: '#8b4513',
-                    fontSize: '1.125rem' // Increased font size
-                  }}
+                <label
+                  htmlFor="identifier"
+                  className="block text-sm font-semibold text-amber-900 mb-2"
                 >
-                  <TranslatedText translationKey="email" /> or{" "}
+                  <TranslatedText translationKey="email" /> /{" "}
                   <TranslatedText translationKey="phone" />
                 </label>
                 <input
@@ -232,24 +207,15 @@ export default function BuyerLoginPage() {
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
                   required
-                  className="w-full px-5 py-4 border-0 rounded-2xl focus:outline-none focus:ring-2 transition-all duration-200"
-                  style={{
-                    backgroundColor: '#f5f1eb',
-                    color: '#8b4513',
-                    fontSize: '1rem' // Increased input font size
-                  }}
+                  className="w-full px-4 py-3 rounded-xl border border-amber-200 bg-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-400 text-amber-900 text-sm"
                   placeholder="Enter email or phone"
                 />
               </div>
-              
+
               <div>
-                <label 
-                  htmlFor="password" 
-                  className="block font-bold mb-3"
-                  style={{ 
-                    color: '#8b4513',
-                    fontSize: '1.125rem'
-                  }}
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-semibold text-amber-900 mb-2"
                 >
                   <TranslatedText translationKey="password" />
                 </label>
@@ -259,80 +225,40 @@ export default function BuyerLoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full px-5 py-4 border-0 rounded-2xl focus:outline-none focus:ring-2 transition-all duration-200"
-                  style={{
-                    backgroundColor: '#f5f1eb',
-                    color: '#8b4513',
-                    fontSize: '1rem'
-                  }}
+                  className="w-full px-4 py-3 rounded-xl border border-amber-200 bg-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-400 text-amber-900 text-sm"
                   placeholder="Enter password"
                 />
               </div>
-              
+
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full text-white py-4 px-6 rounded-2xl transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]"
+                className="w-full py-3 rounded-xl text-white font-semibold text-sm shadow-md transition-all duration-200 hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98]"
                 style={{
-                  background: 'linear-gradient(135deg, #d2691e 0%, #cd853f 100%)',
-                  fontSize: '1.125rem' // Increased button font size
-                }}
-                onMouseEnter={(e) => {
-                  if (!loading) {
-                    (e.target as HTMLButtonElement).style.background = 'linear-gradient(135deg, #b8860b 0%, #daa520 100%)';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!loading) {
-                    (e.target as HTMLButtonElement).style.background = 'linear-gradient(135deg, #d2691e 0%, #cd853f 100%)';
-                  }
+                  background:
+                    "linear-gradient(135deg, #d2691e 0%, #cd853f 100%)",
                 }}
               >
                 {loading ? "Signing in..." : <TranslatedText translationKey="login" />}
               </button>
             </form>
-            
+
             <div className="text-center mt-6">
-              <p 
-                style={{ 
-                  color: '#a0522d',
-                  fontSize: '1rem' // Increased font size
-                }}
-              >
+              <p className="text-sm text-amber-700">
                 <TranslatedText translationKey="noAccount" />{" "}
-                <Link 
-                  href="/signup/buyer" 
-                  className="font-semibold hover:underline transition-colors"
-                  style={{ 
-                    color: '#8b4513',
-                    fontSize: '1rem'
-                  }}
-                  onMouseEnter={(e) => {
-                    (e.target as HTMLAnchorElement).style.color = '#a0522d';
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.target as HTMLAnchorElement).style.color = '#8b4513';
-                  }}
+                <Link
+                  href="/signup/buyer"
+                  className="font-semibold hover:underline text-amber-900"
                 >
                   <TranslatedText translationKey="signup" />
                 </Link>
               </p>
             </div>
 
-            <div className="text-center mt-4">
-              <Link 
-                href="/login" 
-                className="font-medium transition-colors"
-                style={{ 
-                  color: '#a0522d',
-                  fontSize: '0.875rem'
-                }}
-                onMouseEnter={(e) => {
-                  (e.target as HTMLAnchorElement).style.color = '#8b4513';
-                }}
-                onMouseLeave={(e) => {
-                  (e.target as HTMLAnchorElement).style.color = '#a0522d';
-                }}
+            <div className="text-center mt-3">
+              <Link
+                href="/login"
+                className="text-xs text-amber-700 hover:text-amber-900 transition-colors"
               >
                 ← Back to login options
               </Link>

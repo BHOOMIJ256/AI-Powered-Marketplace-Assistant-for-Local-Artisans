@@ -3,15 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Cormorant_Garamond } from "next/font/google";
 import LanguageSelector from "@/components/LanguageSelector";
 import TranslatedText from "@/components/TranslatedText";
-
-const cormorant = Cormorant_Garamond({
-  weight: ["300", "400", "500", "600", "700"],
-  subsets: ["latin"],
-  display: "swap",
-});
 
 export default function SellerLoginPage() {
   const [identifier, setIdentifier] = useState("");
@@ -86,10 +79,8 @@ export default function SellerLoginPage() {
 
   if (checkingAuth) {
     return (
-      <div
-        className={`min-h-screen flex items-center justify-center ${cormorant.className}`}
-      >
-        <p style={{ color: "#8b4513", fontSize: "1.125rem" }}>
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-amber-900 text-base font-medium">
           <TranslatedText translationKey="loading" />
         </p>
       </div>
@@ -97,9 +88,7 @@ export default function SellerLoginPage() {
   }
 
   return (
-    <div
-      className={`min-h-screen overflow-hidden relative ${cormorant.className}`}
-    >
+    <div className="min-h-screen overflow-hidden relative">
       {/* Animated Grid Background */}
       <div className="fixed inset-0 grid grid-cols-5 gap-4 p-4">
         {[0, 1, 2, 3, 4].map((columnIndex) => (
@@ -136,7 +125,7 @@ export default function SellerLoginPage() {
         ))}
       </div>
 
-      {/* Replaced with your Gradient Navbar */}
+      {/* Navbar */}
       <nav
         className="sticky top-0 z-20 mx-auto flex w-full items-center justify-between px-10 py-4 
         bg-gradient-to-r from-amber-900/85 via-amber-800/80 to-amber-900/85 
@@ -146,7 +135,7 @@ export default function SellerLoginPage() {
           href="/"
           className="text-4xl font-extrabold tracking-wider text-amber-100 drop-shadow-md 
                      hover:scale-[1.05] transition-transform duration-500 ease-out"
-          style={{ fontFamily: "Cinzel Decorative, Cormorant Garamond, serif" }}
+          style={{ fontFamily: "Cinzel Decorative, serif" }}
         >
           ARTISAN
         </Link>
@@ -194,7 +183,7 @@ export default function SellerLoginPage() {
       <main className="relative z-10 flex items-center justify-end min-h-screen px-6 pr-12 pt-28">
         <div className="w-full max-w-lg">
           <div
-            className="stable-card rounded-3xl p-10 shadow-2xl border"
+            className="rounded-3xl p-10 shadow-2xl border"
             style={{
               backgroundColor: "rgba(250, 248, 245, 0.98)",
               borderColor: "#d4c4a8",
@@ -202,46 +191,27 @@ export default function SellerLoginPage() {
             }}
           >
             <div className="text-center mb-8">
-              <h1
-                className="font-bold mb-3"
-                style={{
-                  color: "#8b4513",
-                  fontSize: "2.5rem",
-                }}
-              >
+              <h1 className="font-bold mb-2 text-3xl text-amber-900">
                 <TranslatedText translationKey="login" /> as Seller (Artisan)
               </h1>
-              <p
-                style={{
-                  color: "#a0522d",
-                  fontSize: "1.175rem",
-                  fontWeight: "bold",
-                }}
-              >
+              <p className="text-sm text-amber-800/80 font-medium">
                 Sign in to your artisan account
               </p>
             </div>
 
             {error && (
-              <div
-                className="border px-4 py-3 rounded-2xl mb-6"
-                style={{
-                  backgroundColor: "#fdf2f2",
-                  borderColor: "#fecaca",
-                  color: "#b91c1c",
-                  fontSize: "1rem",
-                }}
-              >
+              <div className="border px-4 py-3 rounded-xl mb-6 text-sm font-medium text-red-700 bg-red-50 border-red-200">
                 {error}
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {/* Identifier */}
               <div>
                 <label
                   htmlFor="identifier"
-                  className="block font-bold mb-3"
-                  style={{ color: "#8b4513", fontSize: "1.125rem" }}
+                  className="block font-semibold mb-2 text-sm tracking-wide text-amber-900/90"
                 >
                   <TranslatedText translationKey="email" /> or{" "}
                   <TranslatedText translationKey="phone" />
@@ -252,21 +222,22 @@ export default function SellerLoginPage() {
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
                   required
-                  className="w-full px-5 py-4 border-0 rounded-2xl focus:outline-none focus:ring-2 transition-all duration-200"
+                  className="w-full px-4 py-3 rounded-xl border-0 shadow-sm 
+                             focus:outline-none focus:ring-2 focus:ring-amber-600/50 
+                             transition-all duration-200 text-sm tracking-wide"
                   style={{
                     backgroundColor: "#f5f1eb",
-                    color: "#8b4513",
-                    fontSize: "1rem",
+                    color: "#5c3317",
                   }}
                   placeholder="Enter email or phone"
                 />
               </div>
 
+              {/* Password */}
               <div>
                 <label
                   htmlFor="password"
-                  className="block font-bold mb-3"
-                  style={{ color: "#8b4513", fontSize: "1.125rem" }}
+                  className="block font-semibold mb-2 text-sm tracking-wide text-amber-900/90"
                 >
                   <TranslatedText translationKey="password" />
                 </label>
@@ -276,37 +247,38 @@ export default function SellerLoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full px-5 py-4 border-0 rounded-2xl focus:outline-none focus:ring-2 transition-all duration-200"
+                  className="w-full px-4 py-3 rounded-xl border-0 shadow-sm 
+                             focus:outline-none focus:ring-2 focus:ring-amber-600/50 
+                             transition-all duration-200 text-sm tracking-wide"
                   style={{
                     backgroundColor: "#f5f1eb",
-                    color: "#8b4513",
-                    fontSize: "1rem",
+                    color: "#5c3317",
                   }}
                   placeholder="Enter password"
                 />
               </div>
 
+              {/* Submit */}
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full text-white py-4 px-6 rounded-2xl transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]"
+                className="w-full text-white py-3 px-6 rounded-xl transition-all duration-200 font-semibold shadow-md hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98] text-sm tracking-wide"
                 style={{
                   background:
                     "linear-gradient(135deg, #d2691e 0%, #cd853f 100%)",
-                  fontSize: "1.125rem",
                 }}
               >
                 {loading ? "Signing in..." : <TranslatedText translationKey="login" />}
               </button>
             </form>
 
+            {/* Footer Links */}
             <div className="text-center mt-6">
-              <p style={{ color: "#a0522d", fontSize: "1rem" }}>
+              <p className="text-sm text-amber-800/80">
                 <TranslatedText translationKey="noAccount" />{" "}
                 <Link
                   href="/signup/seller"
-                  className="font-semibold hover:underline transition-colors"
-                  style={{ color: "#8b4513", fontSize: "1rem" }}
+                  className="font-semibold hover:underline transition-colors text-amber-900"
                 >
                   <TranslatedText translationKey="signup" />
                 </Link>
@@ -316,8 +288,7 @@ export default function SellerLoginPage() {
             <div className="text-center mt-4">
               <Link
                 href="/login"
-                className="font-medium transition-colors"
-                style={{ color: "#a0522d", fontSize: "0.875rem" }}
+                className="font-medium transition-colors text-xs text-amber-700 hover:text-amber-900"
               >
                 ← Back to login options
               </Link>

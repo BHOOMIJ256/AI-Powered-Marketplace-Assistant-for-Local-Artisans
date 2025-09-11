@@ -1,17 +1,11 @@
+// src/app/signup/buyer/page.tsx
 "use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Cormorant_Garamond } from "next/font/google";
 import LanguageSelector from "@/components/LanguageSelector";
 import TranslatedText from "@/components/TranslatedText";
-
-const cormorant = Cormorant_Garamond({
-  weight: ["300", "400", "500", "600", "700"],
-  subsets: ["latin"],
-  display: "swap",
-});
 
 export default function BuyerSignupPage() {
   const [formData, setFormData] = useState({
@@ -34,20 +28,17 @@ export default function BuyerSignupPage() {
     try {
       const res = await fetch("/api/buyer/register", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
       const data = await res.json();
-
       if (res.ok) {
         router.push("/buyer");
       } else {
         setError(data.message || "Registration failed");
       }
-    } catch (error) {
+    } catch {
       setError("An error occurred during registration");
     } finally {
       setLoading(false);
@@ -55,17 +46,12 @@ export default function BuyerSignupPage() {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Fixed function to properly distribute 50 images across 5 columns
   const getColumnImages = (columnIndex: number) => {
     const imagesPerColumn = 10;
     const startIndex = columnIndex * imagesPerColumn + 1;
-
     return Array.from({ length: 20 }, (_, i) => {
       const imageIndex = startIndex + (i % imagesPerColumn);
       return `/images/grid/${imageIndex}.png`;
@@ -73,24 +59,21 @@ export default function BuyerSignupPage() {
   };
 
   return (
-    <div className={`min-h-screen overflow-hidden relative ${cormorant.className}`}>
+    <div className="min-h-screen overflow-hidden relative font-sans">
       {/* 🔹 Amber-Themed Navbar */}
-      <nav
-        className="fixed top-0 left-0 right-0 z-50 mx-auto flex w-full items-center justify-between px-10 py-4 
+      <nav className="fixed top-0 left-0 right-0 z-50 mx-auto flex w-full items-center justify-between px-10 py-4 
         bg-gradient-to-r from-amber-900/85 via-amber-800/80 to-amber-900/85 
-        backdrop-blur-md shadow-md border-b border-amber-950/40"
-      >
-        {/* Brand / Logo */}
+        backdrop-blur-md shadow-md border-b border-amber-950/40">
+        
         <Link
           href="/"
           className="text-4xl font-extrabold tracking-wider text-amber-100 drop-shadow-md 
                      hover:scale-[1.05] transition-transform duration-500 ease-out"
-          style={{ fontFamily: "Cinzel Decorative, Cormorant Garamond, serif" }}
+          style={{ fontFamily: "Cinzel Decorative, serif" }}
         >
           ARTISAN
         </Link>
 
-        {/* Nav Links */}
         <div className="hidden gap-4 md:flex items-center">
           {[
             { href: "/", label: "HOME" },
@@ -107,7 +90,6 @@ export default function BuyerSignupPage() {
             </Link>
           ))}
 
-          {/* Login & Signup */}
           <Link
             href="/login"
             className="px-4 py-2 border border-[#c9a86a] text-[#f0e68c] 
@@ -125,7 +107,6 @@ export default function BuyerSignupPage() {
             <TranslatedText translationKey="signup" />
           </Link>
 
-          {/* Language Selector */}
           <div className="ml-4">
             <LanguageSelector />
           </div>
@@ -144,11 +125,7 @@ export default function BuyerSignupPage() {
             {getColumnImages(columnIndex).map((imageSrc, imageIndex) => (
               <div
                 key={`${columnIndex}-${imageIndex}`}
-                className="w-full aspect-square rounded-2xl overflow-hidden shadow-lg flex-shrink-0"
-                style={{
-                  minHeight: "200px",
-                  backgroundColor: "#f5f1eb",
-                }}
+                className="w-full aspect-square rounded-2xl overflow-hidden shadow-lg flex-shrink-0 bg-amber-50"
               >
                 <img
                   src={imageSrc}
@@ -157,9 +134,8 @@ export default function BuyerSignupPage() {
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.style.display = "none";
-                    target.parentElement!.style.background = `linear-gradient(135deg, 
-                      hsl(${30 + (columnIndex * 20 + imageIndex * 15) % 60}, 25%, 75%), 
-                      hsl(${40 + (columnIndex * 20 + imageIndex * 15) % 60}, 30%, 80%))`;
+                    target.parentElement!.style.background =
+                      "linear-gradient(135deg, #f5deb3, #f0e68c)";
                   }}
                 />
               </div>
@@ -168,56 +144,26 @@ export default function BuyerSignupPage() {
         ))}
       </div>
 
-      {/* 🔹 Main Signup Form */}
+      {/* 🔹 Signup Form */}
       <main className="relative z-10 flex items-center justify-end min-h-screen px-6 pr-12 pt-36">
         <div className="w-full max-w-lg">
-          <div
-            className="stable-card rounded-3xl p-10 shadow-2xl border"
-            style={{
-              backgroundColor: "rgba(250, 248, 245, 0.98)",
-              borderColor: "#d4c4a8",
-              boxShadow: "0 25px 50px -12px rgba(139, 69, 19, 0.25)",
-            }}
-          >
-            {/* Title */}
-            <div className="text-center mb-8">
-              <h1
-                className="font-bold mb-3"
-                style={{
-                  color: "#8b4513",
-                  fontSize: "2.5rem",
-                }}
-              >
+          <div className="rounded-3xl p-10 shadow-xl border bg-[rgba(250,248,245,0.98)] border-amber-200">
+            <div className="text-center mb-6">
+              <h1 className="text-3xl font-bold text-amber-900 mb-2">
                 <TranslatedText translationKey="signupAsBuyer" />
               </h1>
-              <p
-                style={{
-                  color: "#a0522d",
-                  fontSize: "1.175rem",
-                  fontWeight: "bold",
-                }}
-              >
+              <p className="text-base font-medium text-amber-700">
                 Create your buyer account
               </p>
             </div>
 
-            {/* Error message */}
             {error && (
-              <div
-                className="border px-4 py-3 rounded-2xl mb-6"
-                style={{
-                  backgroundColor: "#fdf2f2",
-                  borderColor: "#fecaca",
-                  color: "#b91c1c",
-                  fontSize: "1rem",
-                }}
-              >
+              <div className="border px-4 py-3 rounded-2xl mb-6 bg-red-50 border-red-200 text-red-700 text-sm">
                 {error}
               </div>
             )}
 
-            {/* Signup Form */}
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-5">
               {[
                 { id: "name", label: "name", type: "text", required: true },
                 { id: "email", label: "email", type: "email", required: false },
@@ -229,8 +175,7 @@ export default function BuyerSignupPage() {
                 <div key={id}>
                   <label
                     htmlFor={id}
-                    className="block font-bold mb-3 capitalize"
-                    style={{ color: "#8b4513", fontSize: "1.125rem" }}
+                    className="block text-sm font-semibold text-amber-900 mb-2 capitalize"
                   >
                     <TranslatedText translationKey={label} />
                   </label>
@@ -241,40 +186,28 @@ export default function BuyerSignupPage() {
                     value={(formData as any)[id]}
                     onChange={handleChange}
                     required={required}
-                    className="w-full px-5 py-4 border-0 rounded-2xl focus:outline-none focus:ring-2 transition-all duration-200"
-                    style={{
-                      backgroundColor: "#f5f1eb",
-                      color: "#8b4513",
-                      fontSize: "1rem",
-                    }}
+                    className="w-full px-4 py-3 rounded-xl border border-amber-200 bg-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-400 text-amber-900 text-sm"
                     placeholder={`Enter your ${label}`}
                   />
                 </div>
               ))}
 
-              {/* Submit */}
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full text-white py-4 px-6 rounded-2xl transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]"
+                className="w-full py-3 rounded-xl text-white font-semibold text-sm shadow-md transition-all duration-200 hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98]"
                 style={{
                   background: "linear-gradient(135deg, #d2691e 0%, #cd853f 100%)",
-                  fontSize: "1.125rem",
                 }}
               >
                 {loading ? "Creating Account..." : <TranslatedText translationKey="createAccount" />}
               </button>
             </form>
 
-            {/* Redirect to login */}
-            <div className="text-center mt-8">
-              <p style={{ color: "#a0522d", fontSize: "1rem" }}>
+            <div className="text-center mt-6">
+              <p className="text-sm text-amber-700">
                 <TranslatedText translationKey="hasAccount" />{" "}
-                <Link
-                  href="/login/buyer"
-                  className="font-semibold hover:underline transition-colors"
-                  style={{ color: "#8b4513", fontSize: "1rem" }}
-                >
+                <Link href="/login/buyer" className="font-semibold hover:underline text-amber-900">
                   <TranslatedText translationKey="login" />
                 </Link>
               </p>
