@@ -7,7 +7,64 @@ import { ApiResponse, User } from '@/types';
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    let body: any;
+    
+    // Check content type and parse accordingly
+    const contentType = request.headers.get('content-type');
+    
+    if (contentType?.includes('application/json')) {
+      // Handle JSON data
+      body = await request.json();
+    } else if (contentType?.includes('application/x-www-form-urlencoded')) {
+      // Handle form data
+      const formData = await request.formData();
+      body = {};
+      
+      // Convert FormData to object
+      for (const [key, value] of formData.entries()) {
+        if (key === 'languages') {
+          // Handle languages as array if it's sent as comma-separated or multiple values
+          if (body[key]) {
+            // If key already exists, make it an array
+            body[key] = Array.isArray(body[key]) ? [...body[key], value] : [body[key], value];
+          } else {
+            // Try to parse as JSON array first, fallback to splitting by comma
+            try {
+              body[key] = JSON.parse(value as string);
+            } catch {
+              body[key] = (value as string).split(',').map(lang => lang.trim()).filter(Boolean);
+            }
+          }
+        } else if (key === 'age') {
+          // Convert age to number
+          body[key] = value ? parseInt(value as string, 10) : undefined;
+        } else {
+          body[key] = value === '' ? undefined : value;
+        }
+      }
+    } else {
+      // Handle raw form data (URLSearchParams)
+      const formData = await request.text();
+      const params = new URLSearchParams(formData);
+      body = {};
+      
+      for (const [key, value] of params.entries()) {
+        if (key === 'languages') {
+          // Handle languages array
+          try {
+            body[key] = JSON.parse(value);
+          } catch {
+            body[key] = value.split(',').map(lang => lang.trim()).filter(Boolean);
+          }
+        } else if (key === 'age') {
+          body[key] = value ? parseInt(value, 10) : undefined;
+        } else {
+          body[key] = value === '' ? undefined : value;
+        }
+      }
+    }
+
+    console.log('Parsed body:', body); // Debug log
 
     // Validate input data
     const validationResult = artisanRegistrationSchema.safeParse(body);
@@ -66,7 +123,7 @@ export async function POST(request: NextRequest) {
     const created = await db.user.create({
       data: {
         name,
-        email: email || null, // Ensure null if undefined
+        email: email || null,
         phone,
         password: hashedPassword,
         gender: gender || null,
@@ -107,7 +164,7 @@ export async function POST(request: NextRequest) {
       role: created.role,
       isVerified: created.isVerified,
       isActive: created.isActive,
-      createdAt: created.createdAt as unknown as Date,
+      createdAt: created.createdAt,
     };
 
     const res = NextResponse.json<ApiResponse<Partial<User>>>(
@@ -132,7 +189,6 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Registration error:', error);
     
-    // More detailed error logging
     if (error instanceof Error) {
       console.error('Error message:', error.message);
       console.error('Error stack:', error.stack);

@@ -130,7 +130,26 @@ export const translations = {
     city: "City",
     state: "State",
   },
-  
+};
+
+export type TranslationKey = keyof typeof translations.en;
+
+export function getTranslation(locale: string, key: TranslationKey): string {
+  // Always return English source text. Other languages are handled by Google Translate.
+  return translations.en[key] || key;
+}
+
+export function t(locale: string, key: TranslationKey): string {
+  return getTranslation(locale, key);
+}
+
+/*
+The non-English static translations have been intentionally removed in favor of
+dynamic translations powered by Google Translate. If you ever want to restore
+hardcoded translations, add language keys back to the `translations` object.
+*/
+
+/*
   hi: {
     // Common
     welcomeTitle: 'कारीगर मार्केटप्लेस में आपका स्वागत है',
@@ -394,15 +413,4 @@ export const translations = {
     city: "நகரம்",
     state: "மாநிலம்",
   }
-};
-
-export type TranslationKey = keyof typeof translations.en;
-export type Locale = keyof typeof translations;
-
-export function getTranslation(locale: string, key: TranslationKey): string {
-  return translations[locale as Locale]?.[key] || translations.en[key] || key;
-}
-
-export function t(locale: string, key: TranslationKey): string {
-  return getTranslation(locale, key);
-}
+*/
