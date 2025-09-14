@@ -4,49 +4,38 @@ import { NextRequest, NextResponse } from "next/server";
 const STORYTELLING_API_URL = process.env.STORYTELLING_API_URL || "http://localhost:8000";
 
 // Type definitions for the API responses
-interface TranscriptionResponse {
-  success: boolean;
-  transcription?: string;
-  confidence?: number;
-  word_count?: number;
-  character_count?: number;
-  error?: string;
+interface ProcessingInfo {
+  has_audio_input: boolean;
+  has_text_input: boolean;
+  transcription_confidence: number;
+  image_processed: boolean;
+  model_used: string;
+  language_code: string;
 }
 
-interface AIResponseResponse {
-  success: boolean;
-  ai_response?: string;
-  error?: string;
+interface ArtisanContent {
+  title: string;
+  description: string;
+  caption: string;
+  hashtags: string[];
 }
 
-interface CombinedResponse {
+interface BackendResponse {
   success: boolean;
-  transcription?: string;
-  confidence?: number;
-  word_count?: number;
-  character_count?: number;
-  ai_response?: string;
+  data?: ArtisanContent;
   error?: string;
+  processing_info?: ProcessingInfo;
 }
 
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     
-    // Get the endpoint from query params or default to combined
+    // Get the endpoint from query params (for backwards compatibility)
     const url = new URL(request.url);
     const endpoint = url.searchParams.get('endpoint') || 'transcribe-and-respond';
-    
-    // Validate endpoint
-    const validEndpoints = ['transcribe', 'generate-ai-response', 'transcribe-and-respond'];
-    if (!validEndpoints.includes(endpoint)) {
-      return NextResponse.json(
-        { success: false, error: "Invalid endpoint" },
-        { status: 400 }
-      );
-    }
 
-    // Forward the request to the Python backend - FIXED: Use correct variable name
+    // Forward the request to the Python backend - FIXED: Use correct endpoint
     const response = await fetch(`${STORYTELLING_API_URL}/generate-story`, {
       method: 'POST',
       body: formData,
@@ -58,11 +47,19 @@ export async function POST(request: NextRequest) {
       throw new Error(`Storytelling API error: ${response.status} ${response.statusText}`);
     }
 
-    const data = await response.json() as CombinedResponse | TranscriptionResponse | AIResponseResponse;
+    const data = await response.json() as BackendResponse;
     
-    // Add some metadata about the processing
+    // Transform the response to match expected frontend format
     const responseData = {
-      ...data,
+      success: data.success,
+      // Map the new backend response to old format for compatibility
+      transcription: data.processing_info?.has_audio_input ? "Audio processed" : undefined,
+      confidence: data.processing_info?.transcription_confidence || 0,
+      ai_response: data.success ? JSON.stringify(data.data) : undefined,
+      // Include new data structure
+      artisan_content: data.data,
+      processing_info: data.processing_info,
+      error: data.error,
       processed_at: new Date().toISOString(),
       endpoint_used: endpoint,
     };
@@ -104,15 +101,24 @@ export async function GET() {
     });
 
     const isHealthy = healthResponse.ok;
+    let healthData = null;
+    
+    if (isHealthy) {
+      try {
+        healthData = await healthResponse.json();
+      } catch (e) {
+        console.warn('Could not parse health response JSON');
+      }
+    }
     
     return NextResponse.json({
       message: "AI Storytelling API Endpoint",
       service_status: isHealthy ? "healthy" : "unhealthy",
       python_service_url: STORYTELLING_API_URL,
+      backend_health: healthData,
       endpoints: {
-        "POST /api/storytelling?endpoint=transcribe": "Convert audio to text only",
-        "POST /api/storytelling?endpoint=generate-ai-response": "Generate AI response from text + optional image",
-        "POST /api/storytelling?endpoint=transcribe-and-respond": "Combined transcription + AI response (default)",
+        "POST /api/storytelling": "Generate artisan product content from image + optional audio/text",
+        "POST /api/storytelling?endpoint=transcribe-and-respond": "Legacy endpoint (same as above)",
       },
       supported_audio_formats: ["wav", "mp3", "m4a", "flac", "ogg", "webm"],
       supported_languages: ["en-US", "es-ES", "fr-FR", "de-DE", "it-IT", "pt-BR", "hi-IN", "ja-JP", "ko-KR"],
@@ -124,9 +130,8 @@ export async function GET() {
       python_service_url: STORYTELLING_API_URL,
       error: "Could not check Python service health",
       endpoints: {
-        "POST /api/storytelling?endpoint=transcribe": "Convert audio to text only",
-        "POST /api/storytelling?endpoint=generate-ai-response": "Generate AI response from text + optional image", 
-        "POST /api/storytelling?endpoint=transcribe-and-respond": "Combined transcription + AI response (default)",
+        "POST /api/storytelling": "Generate artisan product content from image + optional audio/text",
+        "POST /api/storytelling?endpoint=transcribe-and-respond": "Legacy endpoint (same as above)",
       }
     });
   }

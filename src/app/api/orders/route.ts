@@ -10,10 +10,36 @@ export async function POST(req: NextRequest) {
     if (!buyerId) return NextResponse.json({ success: false, message: "Not authenticated as buyer" }, { status: 401 });
 
     const body = await req.json();
+    
+    // Debug logging - let's see what we're receiving
+    console.log("=== ORDER REQUEST DEBUG ===");
+    console.log("Raw body:", JSON.stringify(body, null, 2));
+    console.log("Body type:", typeof body);
+    console.log("Body keys:", Object.keys(body || {}));
+    
     const items: { productId: string; quantity: number }[] = body.items || [];
     const address: string = body.address || "";
 
-    if (!items.length || !address) return NextResponse.json({ success: false, message: "Missing items or address" }, { status: 400 });
+    console.log("Parsed items:", items);
+    console.log("Items length:", items.length);
+    console.log("Parsed address:", address);
+    console.log("Address length:", address.length);
+    console.log("=== END DEBUG ===");
+
+    if (!items.length || !address) {
+      console.log("Validation failed:");
+      console.log("- Items empty:", !items.length);
+      console.log("- Address empty:", !address);
+      return NextResponse.json({ 
+        success: false, 
+        message: "Missing items or address",
+        debug: {
+          itemsLength: items.length,
+          addressLength: address.length,
+          receivedBody: body
+        }
+      }, { status: 400 });
+    }
 
     const buyer = await db.user.findUnique({ where: { id: buyerId }, select: { city: true, state: true } });
 
@@ -88,7 +114,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, data: { orderId: order.id } });
   } catch (e) {
-    console.error(e);
+    console.error("Order creation error:", e);
     return NextResponse.json({ success: false, message: "Failed to place order" }, { status: 500 });
   }
 }

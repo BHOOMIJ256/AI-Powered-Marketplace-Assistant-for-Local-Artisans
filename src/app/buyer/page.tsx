@@ -26,6 +26,8 @@ export default function BuyerPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [deliveryAddress, setDeliveryAddress] = useState("");
+  const [showCheckout, setShowCheckout] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -115,8 +117,17 @@ export default function BuyerPage() {
 
   const cartTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
+  function proceedToCheckout() {
+    if (cart.length === 0) return;
+    setShowCheckout(true);
+  }
+
   async function checkout() {
     if (cart.length === 0) return;
+    if (!deliveryAddress.trim()) {
+      alert("Please enter your delivery address");
+      return;
+    }
 
     try {
       const orderItems = cart.map(item => ({
@@ -130,13 +141,16 @@ export default function BuyerPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           items: orderItems,
-          totalAmount: cartTotal
+          totalAmount: cartTotal,
+          address: deliveryAddress.trim()
         })
       });
 
       if (res.ok) {
         alert("Order placed successfully!");
         setCart([]);
+        setDeliveryAddress("");
+        setShowCheckout(false);
         router.push("/buyer/orders");
       } else {
         const error = await res.json();
@@ -267,51 +281,110 @@ export default function BuyerPage() {
                 </p>
               ) : (
                 <>
-                  <div className="space-y-3 mb-4 text-amber-900">
-                    {cart.map((item) => (
-                      <div key={item.id} className="flex items-center justify-between border-b pb-2">
-                        <div className="flex-1">
-                          <p className="font-medium text-sm">{item.name}</p>
-                          <p className="text-amber-600 text-sm">
-                            ₹{(item.price / 100).toFixed(2)} × {item.quantity}
-                          </p>
+                  {!showCheckout ? (
+                    <>
+                      <div className="space-y-3 mb-4 text-amber-900">
+                        {cart.map((item) => (
+                          <div key={item.id} className="flex items-center justify-between border-b pb-2">
+                            <div className="flex-1">
+                              <p className="font-medium text-sm">{item.name}</p>
+                              <p className="text-amber-600 text-sm">
+                                ₹{(item.price / 100).toFixed(2)} × {item.quantity}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-2 text-amber-900">
+                              <button
+                                onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                className="w-6 h-6 rounded-full bg-amber-200 flex items-center justify-center text-sm"
+                              >
+                                -
+                              </button>
+                              <span className="w-8 text-center">{item.quantity}</span>
+                              <button
+                                onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                className="w-6 h-6 rounded-full bg-amber-200 flex items-center justify-center text-sm"
+                              >
+                                +
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      
+                      <div className="border-t pt-4">
+                        <div className="flex justify-between items-center mb-4">
+                          <span className="font-semibold">
+                            <TranslatedText translationKey="total" />:
+                          </span>
+                          <span className="text-lg font-bold text-amber-600">
+                            ₹{(cartTotal / 100).toFixed(2)}
+                          </span>
                         </div>
-                        <div className="flex items-center gap-2 text-amber-900">
+                        
+                        <button
+                          onClick={proceedToCheckout}
+                          className="w-full bg-amber-600 text-white py-2 px-4 rounded-md hover:bg-amber-700"
+                        >
+                          Proceed to Checkout
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {/* Checkout Form */}
+                      <div className="space-y-4">
+                        <h4 className="font-semibold text-amber-900">Delivery Details</h4>
+                        
+                        {/* Order Summary */}
+                        <div className="bg-amber-100 p-3 rounded-lg">
+                          <p className="text-sm font-medium text-amber-900 mb-2">Order Summary:</p>
+                          {cart.map((item) => (
+                            <div key={item.id} className="flex justify-between text-sm text-amber-800">
+                              <span>{item.name} × {item.quantity}</span>
+                              <span>₹{((item.price * item.quantity) / 100).toFixed(2)}</span>
+                            </div>
+                          ))}
+                          <div className="border-t mt-2 pt-2 flex justify-between font-semibold text-amber-900">
+                            <span>Total:</span>
+                            <span>₹{(cartTotal / 100).toFixed(2)}</span>
+                          </div>
+                        </div>
+
+                        {/* Address Input */}
+                        <div>
+                          <label htmlFor="address" className="block text-sm font-medium text-amber-900 mb-2">
+                            Delivery Address *
+                          </label>
+                          <textarea
+                            id="address"
+                            rows={3}
+                            className="w-full p-2 border border-amber-300 rounded-md focus:ring-2 focus:ring-amber-500 focus:border-transparent resize-none"
+                            placeholder="Enter your complete delivery address..."
+                            value={deliveryAddress}
+                            onChange={(e) => setDeliveryAddress(e.target.value)}
+                            required
+                          />
+                        </div>
+
+                        {/* Checkout Buttons */}
+                        <div className="space-y-2">
                           <button
-                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                            className="w-6 h-6 rounded-full bg-amber-200 flex items-center justify-center text-sm"
+                            onClick={checkout}
+                            disabled={!deliveryAddress.trim()}
+                            className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
                           >
-                            -
+                            <TranslatedText translationKey="placeOrder" />
                           </button>
-                          <span className="w-8 text-center">{item.quantity}</span>
                           <button
-                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                            className="w-6 h-6 rounded-full bg-amber-200 flex items-center justify-center text-sm"
+                            onClick={() => setShowCheckout(false)}
+                            className="w-full bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600"
                           >
-                            +
+                            Back to Cart
                           </button>
                         </div>
                       </div>
-                    ))}
-                  </div>
-                  
-                  <div className="border-t pt-4">
-                    <div className="flex justify-between items-center mb-4">
-                      <span className="font-semibold">
-                        <TranslatedText translationKey="total" />:
-                      </span>
-                      <span className="text-lg font-bold text-amber-600">
-                        ₹{(cartTotal / 100).toFixed(2)}
-                      </span>
-                    </div>
-                    
-                    <button
-                      onClick={checkout}
-                      className="w-full bg-amber-600 text-white py-2 px-4 rounded-md hover:bg-amber-700"
-                    >
-                      <TranslatedText translationKey="placeOrder" />
-                    </button>
-                  </div>
+                    </>
+                  )}
                 </>
               )}
             </div>

@@ -103,7 +103,7 @@ async function sendViaFast2SMS(phone: string, message: string): Promise<boolean>
       },
       body: JSON.stringify({
         route: 'v3', // Transactional SMS
-        sender_id': smsConfig.fast2sms.senderId,
+        'sender_id': smsConfig.fast2sms.senderId,
         message: message,
         language: 'english',
         flash: 0,

@@ -4,8 +4,12 @@ uvicorn==0.24.0
 python-multipart==0.0.6
 
 # Google APIs - REQUIRED for your backend
-google-cloud-speech>=2.21.0
-google-generativeai>=0.3.0
+google-cloud-aiplatform==1.38.1
+google-cloud-speech==2.21.0
+google-cloud-texttospeech==2.16.3
+google-auth==2.23.4
+google-auth-oauthlib==1.1.0
+google-auth-httplib2==0.1.1
 
 # Core dependencies
 pydantic==2.5.2
@@ -13,11 +17,28 @@ python-dotenv==1.0.0
 requests==2.31.0
 typing-extensions>=4.5.0
 
-torch==2.1.1
-torchvision==0.16.1
-torchaudio==2.1.1
+
 transformers==4.36.2
 openai-whisper==20231117
 pillow==10.1.0
 beautifulsoup4>=4.12.0
 lxml>=4.9.0
+
+flask==2.3.3
+flask-cors==4.0.0
+requests==2.31.0
+opencv-python==4.8.1.78
+numpy==1.24.3
+
+
+# Vector storage and embeddings
+faiss-cpu==1.7.4
+sentence-transformers==2.2.2
+
+# LangChain and RAG components
+langchain==0.1.0
+langchain-community==0.0.13
+langchain-core==0.1.12
+langchain-huggingface==0.0.1
+langchain-google-vertexai==0.0.4
+

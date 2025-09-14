@@ -1,3 +1,4 @@
+// Fixed StoryTool.tsx - Replace line 354 with the actual voice button
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -46,18 +47,31 @@ interface SpeechRecognitionAlternative {
   confidence: number;
 }
 
-export default function StoryTool() {
+interface StoryResult {
+  description: string;
+  caption: string;
+  hashtags: string[];
+  title: string;
+}
+
+interface Props {
+  onPostCreated?: (post: {
+    title: string;
+    description: string;
+    caption: string;
+    hashtags: string[];
+    imageUrl?: string;
+  }) => void;
+}
+
+export default function StoryTool({ onPostCreated }: Props) {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const [note, setNote] = useState("");
   const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<null | {
-    description: string;
-    caption: string;
-    hashtags: string[];
-    title: string;
-  }>(null);
+  const [result, setResult] = useState<null | StoryResult>(null);
   const [aiBackendStatus, setAiBackendStatus] = useState<"checking" | "available" | "unavailable">("checking");
 
   const [isRecording, setIsRecording] = useState(false);
@@ -216,7 +230,7 @@ export default function StoryTool() {
     }
   }
 
-  async function onSubmit(e: React.FormEvent) {
+   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!imageFile) {
       setError("Please select a product photo");
@@ -225,23 +239,107 @@ export default function StoryTool() {
     setLoading(true);
     setError(null);
     setResult(null);
+    
     try {
       const form = new FormData();
       form.append("image", imageFile);
-      if (audioFile) form.append("file", audioFile); // Changed to match Python API
+      if (audioFile) form.append("audio", audioFile);
       if (note.trim()) form.append("note", note.trim());
       form.append("language_code", "en-US");
-      form.append("generate_ai_response", "true");
       form.append("model_name", "gemini-1.5-flash");
 
-      const res = await fetch("/api/generate-story", { method: "POST", body: form });
+      console.log("🚀 Sending request to /api/storytelling");
+      const res = await fetch("/api/storytelling", { method: "POST", body: form });
+      
+      console.log("📡 Response status:", res.status, res.statusText);
       const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || data?.message || "Failed to generate story");
-      setResult(data.data);
+      console.log("📦 Full response data:", data);
+      
+      if (!res.ok) {
+        console.error("❌ Request failed:", data);
+        throw new Error(data?.error || data?.message || "Failed to generate story");
+      }
+      
+      let extractedResult = null;
+      
+      if (data.artisan_content) {
+        extractedResult = data.artisan_content;
+      } else if (data.data) {
+        extractedResult = data.data;
+      } else if (data.ai_response) {
+        try {
+          extractedResult = JSON.parse(data.ai_response);
+        } catch (e) {
+          console.error("Failed to parse ai_response:", e);
+        }
+      }
+      
+      console.log("🎯 Final extracted result:", extractedResult);
+      
+      if (extractedResult && extractedResult.title) {
+        setResult(extractedResult);
+        console.log("✅ Result set successfully!");
+      } else {
+        console.error("❌ No valid result found in response");
+        setError("Received response but couldn't extract story data. Check console for details.");
+      }
+      
     } catch (err: any) {
+      console.error("💥 Error in onSubmit:", err);
       setError(err.message || "Something went wrong");
     } finally {
       setLoading(false);
+    }
+  }
+
+  // New function to save post
+  async function saveAsPost() {
+    if (!result || !onPostCreated) return;
+    
+    setSaving(true);
+    try {
+      // Upload image first if exists
+      let imageUrl = undefined;
+      if (imageFile) {
+        const formData = new FormData();
+        formData.append('image', imageFile);
+        
+        const uploadRes = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+        
+        if (uploadRes.ok) {
+          const uploadData = await uploadRes.json();
+          imageUrl = uploadData.url;
+        }
+      }
+
+      // Call the callback with post data
+      await onPostCreated({
+        title: result.title,
+        description: result.description,
+        caption: result.caption,
+        hashtags: result.hashtags,
+        imageUrl: imageUrl,
+      });
+
+      // Clear the form
+      setResult(null);
+      setImageFile(null);
+      setAudioFile(null);
+      setNote("");
+      setError(null);
+      
+      // Show success message
+      setError("✅ Post saved successfully!");
+      setTimeout(() => setError(null), 3000);
+      
+    } catch (err: any) {
+      console.error("Failed to save post:", err);
+      setError("Failed to save post. Please try again.");
+    } finally {
+      setSaving(false);
     }
   }
 
@@ -377,10 +475,17 @@ export default function StoryTool() {
             value={note} 
             onChange={e=>setNote(e.target.value)} 
           />
-          <button disabled={loading || !imageFile} className="rounded-md bg-foreground text-background px-4 py-2 text-sm font-medium disabled:opacity-60">
+          <button 
+            disabled={loading || !imageFile} 
+            className="rounded-md bg-foreground text-background px-4 py-2 text-sm font-medium disabled:opacity-60"
+          >
             {loading ? "Generating..." : "Generate Story"}
           </button>
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && (
+            <p className={`text-sm ${error.startsWith('✅') ? 'text-green-600' : 'text-red-600'}`}>
+              {error}
+            </p>
+          )}
           {!voiceSupported && (
             <p className="text-xs text-gray-500">
               💡 Tip: Voice recording requires HTTPS or localhost. You can still type your notes or upload audio files.
@@ -392,27 +497,50 @@ export default function StoryTool() {
             </p>
           )}
         </div>
+        
         <div className="space-y-2">
           {previewUrl && <img src={previewUrl} alt="preview" className="w-full h-52 object-cover rounded border" />}
           {result && (
-            <div className="space-y-2">
+            <div className="space-y-3 border rounded-lg p-3 bg-gray-50">
               <div>
-                <p className="text-xs uppercase text-gray-500">Description</p>
+                <p className="text-xs uppercase text-gray-500 font-medium">Title</p>
+                <p className="text-sm font-medium">{result.title}</p>
+              </div>
+              <div>
+                <p className="text-xs uppercase text-gray-500 font-medium">Description</p>
                 <p className="text-sm whitespace-pre-wrap">{result.description}</p>
-                <button type="button" className="mt-1 text-xs underline" onClick={()=>copy(result.description)}>Copy</button>
+                <button type="button" className="mt-1 text-xs underline text-blue-600" onClick={()=>copy(result.description)}>Copy</button>
               </div>
               <div>
-                <p className="text-xs uppercase text-gray-500">Caption</p>
+                <p className="text-xs uppercase text-gray-500 font-medium">Caption</p>
                 <p className="text-sm whitespace-pre-wrap">{result.caption}</p>
-                <button type="button" className="mt-1 text-xs underline" onClick={()=>copy(result.caption)}>Copy</button>
+                <button type="button" className="mt-1 text-xs underline text-blue-600" onClick={()=>copy(result.caption)}>Copy</button>
               </div>
               <div>
-                <p className="text-xs uppercase text-gray-500">Hashtags</p>
+                <p className="text-xs uppercase text-gray-500 font-medium">Hashtags</p>
                 <p className="text-sm">{result.hashtags.map(h=>`#${h}`).join(" ")}</p>
-                <button type="button" className="mt-1 text-xs underline" onClick={()=>copy(result.hashtags.map(h=>`#${h}`).join(" "))}>Copy</button>
+                <button type="button" className="mt-1 text-xs underline text-blue-600" onClick={()=>copy(result.hashtags.map(h=>`#${h}`).join(" "))}>Copy</button>
               </div>
-              <div className="pt-2">
-                <button type="button" className="rounded-md border border-foreground px-3 py-1.5 text-xs font-medium hover:bg-foreground/5" onClick={downloadPoster}>Download Poster</button>
+              
+              {/* Action buttons */}
+              <div className="flex gap-2 pt-2 border-t">
+                {onPostCreated && (
+                  <button 
+                    type="button" 
+                    onClick={saveAsPost}
+                    disabled={saving}
+                    className="flex-1 rounded-md bg-green-600 text-white px-3 py-2 text-sm font-medium hover:bg-green-700 disabled:opacity-60"
+                  >
+                    {saving ? "Saving..." : "📌 Save as Post"}
+                  </button>
+                )}
+                <button 
+                  type="button" 
+                  className="rounded-md border border-foreground px-3 py-2 text-sm font-medium hover:bg-foreground/5" 
+                  onClick={downloadPoster}
+                >
+                  📥 Download Poster
+                </button>
               </div>
               <canvas ref={canvasRef} className="hidden" />
             </div>

@@ -1,21 +1,26 @@
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import { db } from "@/lib/db";
+"use client";
+
 import AddProductForm from "./AddProductForm";
 import LanguageSelector from "@/components/LanguageSelector";
 import TranslatedText from "@/components/TranslatedText";
 import ProductImage from "@/components/ProductImage";
 
-export default async function ProductsManagePage() {
-  const cookieStore = await cookies();
-  const userId = cookieStore.get("session_user")?.value;
-  if (!userId) redirect("/login");
+interface Product {
+  id: string;
+  name: string;
+  description: string | null;
+  price: number;
+  stock: number;
+  imageUrl: string | null;
+  createdAt: Date;
+  artisanId: string;
+}
 
-  const products = await db.product.findMany({ 
-    where: { artisanId: userId }, 
-    orderBy: { createdAt: "desc" } 
-  });
+interface ProductsPageClientProps {
+  products: Product[];
+}
 
+export default function ProductsPageClient({ products }: ProductsPageClientProps) {
   return (
     <div className="min-h-screen p-6 bg-amber-100">
       <div className="max-w-5xl mx-auto">
@@ -37,8 +42,8 @@ export default async function ProductsManagePage() {
                 <div key={p.id} className="border rounded-md p-3 bg-white shadow-sm">
                   {/* Product Image */}
                   <div className="h-32 bg-gray-100 rounded overflow-hidden mb-2">
-                    <ProductImage 
-                      src={p.imageUrl} 
+                    <ProductImage
+                      src={p.imageUrl}
                       alt={p.name}
                     />
                   </div>

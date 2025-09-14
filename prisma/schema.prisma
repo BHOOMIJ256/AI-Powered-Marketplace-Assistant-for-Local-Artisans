@@ -44,10 +44,31 @@ model User {
 
   // Relations
   products       Product[]
+  posts          Post[]        // ADD THIS LINE - New relation to posts
   buyerOrders    Order[]   @relation("buyerOrders")
   artisanOrders  Order[]   @relation("artisanOrders")
 
   @@map("users")
+}
+
+// ADD THIS NEW MODEL - Post model for story-generated content
+model Post {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  caption     String?
+  hashtags    String   // Store as JSON string since SQLite doesn't have array support
+  imageUrl    String?
+  
+  // Relations
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("posts")
 }
 
 model Product {
