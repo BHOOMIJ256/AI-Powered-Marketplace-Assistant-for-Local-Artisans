@@ -63,40 +63,20 @@ export default function AboutPage() {
 
       {/* Push content below fixed navbar (navbar height ≈ 96px → pt-24) */}
       <main className="pt-24">
-        <section>
-          <div
-            className="absolute inset-0 z-0"
-            style={{
-              background: `url("/bg1.jpg")`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              filter: "blur(2px)",
-              transform: "scale(1.55)"
-            }}
+        {/* Hero section */}
+        <section className="relative h-[420px] w-full overflow-hidden">
+          <img
+            src="https://itokri.com/cdn/shop/articles/header6_1_bf61afaa-180c-4ea9-a2fb-be108b9ca401.jpg?v=1738050867&width=930"
+            alt="potter shaping clay on a wheel"
+            className="absolute inset-0 h-full w-full object-cover"
           />
-
-          {/* Gradient overlay */}
-            <section className="relative h-[300px] w-full overflow-hidden">
-              <img
-                src="https://itokri.com/cdn/shop/articles/header6_1_bf61afaa-180c-4ea9-a2fb-be108b9ca401.jpg?v=1738050867&width=930"
-                alt="potter shaping clay on a wheel"
-                className="absolute inset-0 h-full w-full object-cover"
-              />
-              <div className="absolute inset-0 bg-black/40" />
-              <div className="relative z-10 flex h-full items-center justify-center">
-                <h1 className="text-5xl md:text-6xl font-extrabold text-white tracking-wide">
-                  About us
-                </h1>
-              </div>
-            </section>
-          <div
-            className="absolute inset-0 z-0"
-            style={{
-              background: `linear-gradient(135deg, rgba(252, 252, 252, 0.1) 0%, rgba(216, 196, 196, 0.15) 100%)`
-            }}
-          />
-          {/* Hero section */}
-
+          <div className="absolute inset-0 bg-black/40" />
+          <div className="relative z-10 flex h-full items-center justify-center">
+            <h1 className="text-5xl md:text-6xl font-extrabold text-white tracking-wide">
+              About us
+            </h1>
+          </div>
+        </section>
 
           {/* Content with decorative side images */}
           <section className="relative mx-auto max-w-6xl px-4 py-12 md:py-16">
