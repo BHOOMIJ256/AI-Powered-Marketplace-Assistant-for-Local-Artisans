@@ -24,14 +24,15 @@ export default function DashboardLayout({
 
   return (
     <div className="min-h-screen flex flex-col bg-amber-50">
-      {/* Navbar (new version) */}
-      <nav className="sticky top-0 z-20 mx-auto flex w-full items-center justify-between px-10 py-4 
+      {/* Navbar */}
+      <nav
+        className="sticky top-0 z-20 mx-auto flex w-full items-center justify-between px-10 py-4 
         bg-gradient-to-r from-amber-900/85 via-amber-800/80 to-amber-900/85 
         backdrop-blur-md shadow-md border-b border-amber-950/40"
       >
         {/* Brand / Logo */}
-        <Link 
-          href="/" 
+        <Link
+          href="/"
           className="text-4xl font-extrabold tracking-wider text-amber-100 drop-shadow-md 
                      hover:scale-[1.05] transition-transform duration-500 ease-out"
           style={{ fontFamily: "Cinzel Decorative, Cormorant Garamond, serif" }}
@@ -57,14 +58,16 @@ export default function DashboardLayout({
           ))}
 
           {/* Login & Signup */}
-          <Link
-            href="/login"
-            className="px-4 py-2 border border-[#c9a86a] text-[#f0e68c] 
+          <form action="/api/logout" method="post">
+            <button
+              type="submit"
+              className="px-4 py-2 border border-[#c9a86a] text-[#f0e68c] 
                        rounded-md font-medium shadow-sm transition-all duration-300 
                        hover:bg-[#f0e68c] hover:text-[#5c3317] hover:scale-105"
-          >
-            <TranslatedText translationKey="login" />
-          </Link>
+            >
+              <TranslatedText translationKey="logout" />
+            </button>
+          </form>
           <Link
             href="/signup"
             className="px-4 py-2 border border-[#c9a86a] text-[#f0e68c] 
@@ -81,8 +84,8 @@ export default function DashboardLayout({
         </div>
       </nav>
 
-      {/* Content wrapper (push down so it doesn’t overlap navbar) */}
-      <div className="flex flex-1 pt-20">
+      {/* Content wrapper (removed pt-20) */}
+      <div className="flex flex-1">
         {/* Sidebar */}
         <aside className="w-56 bg-[rgb(92,51,23)] text-white p-4 space-y-4">
           <p className="text-xs uppercase tracking-wide text-gray-300 mb-2">

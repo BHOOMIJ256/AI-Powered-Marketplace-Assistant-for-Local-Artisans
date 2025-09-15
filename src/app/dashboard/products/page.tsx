@@ -78,7 +78,7 @@ export default async function ProductsManagePage() {
 
           <section className="space-y-3">
             <h2 className="text-xl font-medium text-amber-800 border-b border-amber-800">
-              <TranslatedText translationKey="addProduct" />
+              <TranslatedText translationKey="Add Product" />
             </h2>
             <AddProductForm />
           </section>
