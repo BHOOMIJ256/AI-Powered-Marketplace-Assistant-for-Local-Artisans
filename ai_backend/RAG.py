@@ -24,7 +24,7 @@ try:
     from langchain_google_vertexai import ChatVertexAI
     
     # Get project ID from environment variable
-    project_id = os.getenv('GOOGLE_CLOUD_PROJECT')
+    project_id = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
     
     if not project_id:
         logger.warning("GOOGLE_CLOUD_PROJECT environment variable not set")
@@ -648,16 +648,10 @@ async def internal_error_handler(request, exc):
 if __name__ == "__main__":
     logger.info("🚀 Starting Artisan Helper Bot server...")
     logger.info("📝 Environment status:")
-    logger.info(f"   - Google Cloud Project: {os.getenv('GOOGLE_CLOUD_PROJECT', 'Not set')}")
+    logger.info(f"   - Google Cloud Project: {os.getenv('GOOGLE_APPLICATION_CREDENTIALS', 'Not set')}")
     logger.info(f"   - Credentials: {'✅ Found' if os.getenv('GOOGLE_APPLICATION_CREDENTIALS') else '❌ Not found'}")
     logger.info(f"   - Vertex AI: {'✅ Available' if VERTEXAI_ENABLED else '❌ Not available'}")
     logger.info(f"   - Speech API: {'✅ Available' if SPEECH_ENABLED else '❌ Not available'}")
     logger.info("🌐 Server will be available at: http://localhost:8001")
     
-    uvicorn.run(
-        app,  # Use the app object directly instead of string reference
-        host="0.0.0.0",
-        port=8001,
-        reload=True,
-        log_level="info"
-    )
+    uvicorn.run("RAG:app", host="0.0.0.0", port=8001, reload=True)
