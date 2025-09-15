@@ -87,7 +87,7 @@ export default function Home() {
           {[
             { href: "/", label: "HOME" },
             { href: "/about", label: "ABOUT" },
-            { href: "/Contact", label: "CONTACT" },
+            { href: "/Contact", label: "CHATBOT" },
           ].map((item) => (
             <Link
               key={item.href}
