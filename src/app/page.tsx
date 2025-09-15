@@ -220,9 +220,9 @@ export default function Home() {
                 img: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQ0lhb9y_ohCV6ZE67iN-588QkrHFgdzPAM-aZALAcz1SmUgLh_",
               },
               {
-                name: "New Artisan",
+                name: "Fayaz Ahmad",
                 craft: "Traditional craft",
-                img: "https://via.placeholder.com/150",
+                img: "https://media.licdn.com/dms/image/v2/D5603AQFBcpanvN-vqw/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1716122682654?e=2147483647&v=beta&t=4piy7-FiVpUnwmsWYfMnX32oqyOxrxGvSUKG8zrB_as",
               },
             ].map((artisan, i) => (
               <div
