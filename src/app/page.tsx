@@ -87,7 +87,7 @@ export default function Home() {
           {[
             { href: "/", label: "HOME" },
             { href: "/about", label: "ABOUT" },
-            { href: "#contact", label: "CONTACT" },
+            { href: "/Contact", label: "CONTACT" },
           ].map((item) => (
             <Link
               key={item.href}
@@ -116,6 +116,8 @@ export default function Home() {
           >
             Sign Up
           </Link>
+
+          
 
           {/* Language Selector on extreme right */}
           <div className="ml-4">
