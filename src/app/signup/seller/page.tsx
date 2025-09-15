@@ -1,11 +1,17 @@
 // src/app/signup/seller/page.tsx
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import LanguageSelector from "@/components/LanguageSelector";
 import TranslatedText from "@/components/TranslatedText";
 
 export default function SellerSignupPage() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const router = useRouter();
+
   const getColumnImages = (columnIndex: number) => {
     const imagesPerColumn = 10;
     const startIndex = columnIndex * imagesPerColumn + 1;
@@ -15,10 +21,53 @@ export default function SellerSignupPage() {
     });
   };
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError("");
+
+    const formData = new FormData(e.currentTarget);
+    
+    // Convert FormData to JSON
+    const data = {
+      name: formData.get("name") as string,
+      email: formData.get("email") as string || undefined,
+      phone: formData.get("phone") as string,
+      password: formData.get("password") as string,
+      // Add default values for required fields that aren't in the form
+      city: "Not Specified",
+      state: "Not Specified",
+    };
+
+    try {
+      const response = await fetch("/api/auth", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Redirect to artisan dashboard or success page
+        router.push("/dashboard");
+      } else {
+        setError(result.error || result.message || "Registration failed");
+      }
+    } catch (err) {
+      console.error("Registration error:", err);
+      setError("Network error. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen overflow-hidden relative font-sans">
       {/* Background grid */}
-      <div className="fixed inset-0 grid grid-cols-5 gap-4 p-4">
+      <div className="fixed inset-0 grid grid-cols-5 gap-4 p-4 blur-[2px]">
         {[0, 1, 2, 3, 4].map((columnIndex) => (
           <div
             key={columnIndex}
@@ -48,9 +97,9 @@ export default function SellerSignupPage() {
         ))}
       </div>
 
-      {/* Navbar (same as BuyerLoginPage) */}
-      <nav className="sticky top-0 z-50 mx-auto flex w-full items-center justify-between px-10 py-4 
-        bg-gradient-to-r from-amber-900/85 via-amber-800/80 to-amber-900/85 
+      {/* Navbar (removed blur effect) */}
+      <nav className="fixed top-0 left-0 right-0 z-20 mx-auto flex w-full items-center justify-between px-10 py-4 
+        bg-amber-900/85  
         backdrop-blur-md shadow-md border-b border-amber-950/40">
         
         {/* Brand / Logo */}
@@ -118,7 +167,13 @@ export default function SellerSignupPage() {
               </p>
             </div>
 
-            <form action="/api/auth" method="post" className="space-y-5">
+            {error && (
+              <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-5">
               <div>
                 <label
                   htmlFor="name"
@@ -188,14 +243,17 @@ export default function SellerSignupPage() {
 
               <button
                 type="submit"
-                className="w-full py-3 rounded-xl text-white font-semibold text-sm shadow-md transition-all duration-200 hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98]"
-                style={{
-                  background:
-                    "linear-gradient(135deg, #d2691e 0%, #cd853f 100%)",
-                }}
+                disabled={isSubmitting}
+                className="w-full py-3 rounded-xl text-amber-100 font-semibold text-sm shadow-md transition-all duration-200 hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed bg-amber-900 hover:bg-amber-800"
               >
-                <TranslatedText translationKey="create" />{" "}
-                <TranslatedText translationKey="account" />
+                {isSubmitting ? (
+                  "Creating Account..."
+                ) : (
+                  <>
+                    <TranslatedText translationKey="create" />{" "}
+                    <TranslatedText translationKey="account" />
+                  </>
+                )}
               </button>
             </form>
 
