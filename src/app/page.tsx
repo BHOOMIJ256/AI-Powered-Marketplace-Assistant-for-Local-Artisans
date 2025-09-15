@@ -82,17 +82,17 @@ export default function Home() {
     ARTISAN
   </div>
 
-  {/* Nav Links */}
-  <div className="hidden gap-4 md:flex items-center">
-    {[ 
-      { href: "/", label: "HOME" },
-      { href: "/about", label: "ABOUT" },
-      { href: "#contact", label: "CONTACT" },
-    ].map((item) => (
-      <Link
-        key={item.href}
-        href={item.href}
-        className="px-4 py-2 text-amber-100 tracking-wide font-medium 
+        {/* Nav Links */}
+        <div className="hidden gap-4 md:flex items-center">
+          {[
+            { href: "/", label: "HOME" },
+            { href: "/about", label: "ABOUT" },
+            { href: "/Contact", label: "CHATBOT" },
+          ].map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="px-4 py-2 text-amber-100 tracking-wide font-medium 
                    transition-all duration-300 hover:text-amber-300"
       >
         {item.label}
@@ -116,6 +116,8 @@ export default function Home() {
     >
       Sign Up
     </Link>
+
+          
 
     {/* Language Selector on extreme right */}
     <div className="ml-4">
@@ -174,20 +176,28 @@ export default function Home() {
       {/* Section 1: Featured Artisans - Brown & Cream Theme */}
       <section
         ref={artisansRef as any}
-        className={`relative z-10 bg-[khaki]/10 flex items-center transition-all duration-1000 delay-300 ${
-          artisansInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-        }`}
+        className={`relative z-10 flex items-center transition-all duration-1000 delay-300
+          ${artisansInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}
+        `}
       >
-        <div className="max-w-7xl mx-auto px-6 py-20">
+        {/* Background image layer */}
+        <div
+          className="absolute inset-0 bg-[url('/bg1.jpg')] bg-cover bg-center bg-no-repeat opacity-40 pointer-events-none"
+        ></div>
+
+        {/* Content */}
+        <div className="relative max-w-7xl mx-auto px-6 py-20">
           <div className="text-center mb-16">
             <h2
-              className="text-7xl font-bold text-amber-900 mb-6 drop-shadow-sm animate-fade-in-up delay-200"
+              className={`text-7xl font-bold text-amber-900 mb-6 drop-shadow-sm 
+                animate-fade-in-up delay-200`}
               style={{ fontFamily: "Cormorant Garamond, serif" }}
             >
               <TranslatedText translationKey="Featured Artisans" />
             </h2>
             <p
-              className="text-2xl text-amber-700 max-w-4xl mx-auto leading-relaxed"
+              className={`text-2xl text-amber-700 max-w-4xl mx-auto leading-relaxed 
+                animate-fade-in-up delay-500`}
               style={{ fontFamily: "Playfair Display, serif" }}
             >
               <TranslatedText translationKey="featuredArtisansDescription" />
@@ -212,15 +222,15 @@ export default function Home() {
                 img: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQ0lhb9y_ohCV6ZE67iN-588QkrHFgdzPAM-aZALAcz1SmUgLh_",
               },
               {
-                name: "New Artisan",
+                name: "Fayaz Ahmad",
                 craft: "Traditional craft",
-                img: "https://via.placeholder.com/150",
+                img: "https://media.licdn.com/dms/image/v2/D5603AQFBcpanvN-vqw/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1716122682654?e=2147483647&v=beta&t=4piy7-FiVpUnwmsWYfMnX32oqyOxrxGvSUKG8zrB_as",
               },
             ].map((artisan, i) => (
               <div
                 key={i}
                 className={`bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-6 border-l-4 border-amber-800 shadow-md hover:shadow-lg transition-all flex gap-6 items-center
-                transform transition duration-700 ease-out 
+                transform transition duration-700 ease-out
                 ${artisansInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}
                 `}
                 style={{ transitionDelay: `${i * 200}ms` }} // stagger effect
@@ -237,7 +247,7 @@ export default function Home() {
                 {/* Text content on right */}
                 <div>
                   <h3
-                    className="text-xl font-bold text-amber-800 mb-2"
+                    className="text-xl font-bold text-amber-800 mb-2 animate-fade-in-up delay-700"
                     style={{ fontFamily: "Cormorant Garamond, serif" }}
                   >
                     {artisan.name}
@@ -253,6 +263,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+
 
 
 
@@ -275,92 +286,98 @@ export default function Home() {
       </div>
       {/* Section 2: Product Categories - Warm Browns */}
       <section
-  ref={categoriesRef as any}
-  className={`relative z-10 min-h-screen bg-[khaki]/10 flex items-center transition-all duration-1000 delay-400 ${
-    categoriesInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-  }`}
->
-  <div className="max-w-7xl mx-auto px-6 py-20">
-    {/* Heading */}
-    <div className="text-center mb-16">
-      <h2
-        className="text-7xl font-bold text-stone-800 mb-6 drop-shadow-sm animate-fade-in-up delay-200"
-        style={{ fontFamily: "Cormorant Garamond, serif" }}
+        ref={categoriesRef as any}
+        className={`relative z-10 min-h-screen flex items-center transition-all duration-1000 delay-400
+          ${categoriesInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}
+        `}
       >
-        <TranslatedText translationKey="Explore diverse categories" />
-      </h2>
-      <p
-        className="text-2xl text-stone-700 max-w-4xl mx-auto leading-relaxed animate-fade-in-up delay-200"
-        style={{ fontFamily: "Playfair Display, serif" }}
-      >
-        <TranslatedText translationKey="Discover unique creations that tell a story and carry the soul of their maker." />
-      </p>
-    </div>
-
-    {/* Categories Grid */}
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
-      {[
-        {
-          name: "Textiles",
-          img: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Weaving_jamdani_at_BSCIC_Jamdani_palli%2C_Narayanganj_113.jpg/330px-Weaving_jamdani_at_BSCIC_Jamdani_palli%2C_Narayanganj_113.jpg",
-        },
-        {
-          name: "Pottery",
-          img: "https://www.tafecafe.com/wp-content/uploads/2022/11/Pottery.png",
-        },
-        {
-          name: "Jewelry",
-          img: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=200",
-        },
-        {
-          name: "Woodwork",
-          img: "https://www.sowpeace.in/cdn/shop/files/sowpeace-wooden-elephant-artisan-tabletop-decor-masterpiecetabletopsowpeacewood-eldn-wdn-tt-786569.jpg?v=1741833131&width=1946",
-        },
-        {
-          name: "Metalcraft",
-          img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTS3pNNPOuMPCeKX6jpV2UAoAy2LxZiajD_Yw&s",
-        },
-        {
-          name: "Paintings",
-          img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTk0w_QBcHm86fUi0gxEegs_cXsWEYGqelBGw&s",
-        },
-        {
-          name: "Sculptures",
-          img: "https://5.imimg.com/data5/AZ/VC/FU/SELLER-7545519/indian-sculpture.jpeg",
-        },
-        {
-          name: "Ceramics",
-          img: "https://m.media-amazon.com/images/I/71NAoXH3bhL.jpg",
-        },
-      ].map((category, i) => (
+        {/* Background image layer */}
         <div
-          key={category.name}
-          className={`bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-6 shadow-md hover:shadow-xl border-l-4 border-amber-800 transition-all transform
-          ${categoriesInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}
-          `}
-          style={{ transitionDelay: `${i * 150}ms` }} // stagger animation
-        >
-          {/* Image */}
-          <div className="w-32 h-32 mx-auto mb-4 rounded-full overflow-hidden border-2 border-amber-400 shadow">
-            <img
-              src={category.img}
-              alt={category.name}
-              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-            />
+          className="absolute inset-0 bg-[url('/bg1.jpg')] bg-cover bg-center bg-no-repeat opacity-40 pointer-events-none"
+        ></div>
+
+        <div className="relative max-w-7xl mx-auto px-6 py-20">
+          {/* Heading */}
+          <div className="text-center mb-16">
+            <h2
+              className="text-7xl font-bold text-stone-800 mb-6 drop-shadow-sm animate-fade-in-up delay-200"
+              style={{ fontFamily: "Cormorant Garamond, serif" }}
+            >
+              <TranslatedText translationKey="Explore diverse categories" />
+            </h2>
+            <p
+              className="text-2xl text-stone-700 max-w-4xl mx-auto leading-relaxed animate-fade-in-up delay-200"
+              style={{ fontFamily: "Playfair Display, serif" }}
+            >
+              <TranslatedText translationKey="Discover unique creations that tell a story and carry the soul of their maker." />
+            </p>
           </div>
 
-          {/* Text */}
-          <h3
-            className="text-xl font-bold text-amber-800 text-center"
-            style={{ fontFamily: "Cormorant Garamond, serif" }}
-          >
-            {category.name}
-          </h3>
+          {/* Categories Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
+            {[
+              {
+                name: "Textiles",
+                img: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/Weaving_jamdani_at_BSCIC_Jamdani_palli%2C_Narayanganj_113.jpg/330px-Weaving_jamdani_at_BSCIC_Jamdani_palli%2C_Narayanganj_113.jpg",
+              },
+              {
+                name: "Pottery",
+                img: "https://www.tafecafe.com/wp-content/uploads/2022/11/Pottery.png",
+              },
+              {
+                name: "Jewelry",
+                img: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=200",
+              },
+              {
+                name: "Woodwork",
+                img: "https://www.sowpeace.in/cdn/shop/files/sowpeace-wooden-elephant-artisan-tabletop-decor-masterpiecetabletopsowpeacewood-eldn-wdn-tt-786569.jpg?v=1741833131&width=1946",
+              },
+              {
+                name: "Metalcraft",
+                img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTS3pNNPOuMPCeKX6jpV2UAoAy2LxZiajD_Yw&s",
+              },
+              {
+                name: "Paintings",
+                img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTk0w_QBcHm86fUi0gxEegs_cXsWEYGqelBGw&s",
+              },
+              {
+                name: "Sculptures",
+                img: "https://5.imimg.com/data5/AZ/VC/FU/SELLER-7545519/indian-sculpture.jpeg",
+              },
+              {
+                name: "Ceramics",
+                img: "https://m.media-amazon.com/images/I/71NAoXH3bhL.jpg",
+              },
+            ].map((category, i) => (
+              <div
+                key={category.name}
+                className={`bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-6 shadow-md hover:shadow-xl border-l-4 border-amber-800 transition-all transform
+                ${categoriesInView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}
+                `}
+                style={{ transitionDelay: `${i * 150}ms` }} // stagger animation
+              >
+                {/* Image */}
+                <div className="w-32 h-32 mx-auto mb-4 rounded-full overflow-hidden border-2 border-amber-400 shadow">
+                  <img
+                    src={category.img}
+                    alt={category.name}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                  />
+                </div>
+
+                {/* Text */}
+                <h3
+                  className="text-xl font-bold text-amber-800 text-center"
+                  style={{ fontFamily: "Cormorant Garamond, serif" }}
+                >
+                  {category.name}
+                </h3>
+              </div>
+            ))}
+          </div>
         </div>
-      ))}
-    </div>
-  </div>
-</section>
+      </section>
+
 
 
       {/* Decorative Image Divider 3 */}
