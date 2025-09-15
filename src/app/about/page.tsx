@@ -67,7 +67,7 @@ export default function AboutPage() {
         {/* Hero section */}
         <section className="relative h-[420px] w-full overflow-hidden">
           <img
-            src="https://itokri.com/cdn/shop/articles/header6_1_bf61afaa-180c-4ea9-a2fb-be108b9ca401.jpg?v=1738050867&width=930"
+            src="/images/about-us.jpg"
             alt="potter shaping clay on a wheel"
             className="absolute inset-0 h-full w-full object-cover"
           />
