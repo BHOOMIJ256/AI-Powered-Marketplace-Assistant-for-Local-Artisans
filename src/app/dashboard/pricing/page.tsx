@@ -1,6 +1,6 @@
 export default function PricingPage() {
 	return (
-		<div className="space-y-4 bg-amber-100">
+		<div className="min-h-screen p-6 bg-[rgba(139,69,19,0.1)]">
 			<h1 className="text-xl font-semibold text-amber-800">Pricing & Trend Analytics</h1>
 			<div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
 				<div className="border rounded-md p-4 bg-amber-50">

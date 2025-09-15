@@ -96,7 +96,7 @@ export default function AddProductForm() {
         />
       </div>
       
-      <button className="w-full rounded-md bg-[#8B5E3C] hover:bg-[#A67B5B] text-[#F5F5DC] py-2.5 font-medium transition-colors">
+      <button className="w-full rounded-md bg-[#8b4513] hover:bg-[#A67B5B] text-[#F5F5DC] py-2.5 font-medium transition-colors">
         {t("createProduct")}
       </button>
 

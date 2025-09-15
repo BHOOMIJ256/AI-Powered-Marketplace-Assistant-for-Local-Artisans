@@ -16,7 +16,7 @@ export default async function OrdersListPage() {
   });
 
   return (
-    <div className="min-h-screen p-6 bg-amber-100">
+    <div className="min-h-screen p-6 bg-[rgba(139,69,19,0.1)]">
       <div className="max-w-4xl mx-auto space-y-4">
         <h1 className="text-2xl font-semibold text-amber-800">Orders</h1>
         <div className="border rounded-md divide-y border-amber-800">

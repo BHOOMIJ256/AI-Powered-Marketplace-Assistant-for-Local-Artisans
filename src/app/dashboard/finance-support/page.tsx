@@ -85,7 +85,7 @@ export default function FinanceSupportPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-amber-100 p-6">
+      <div className="min-h-screen p-6 bg-[rgba(139,69,19,0.1)]">
         <div className="max-w-7xl mx-auto">
           <div className="animate-pulse">
             <div className="h-8 bg-amber-200 rounded w-1/4 mb-6"></div>
@@ -105,7 +105,7 @@ export default function FinanceSupportPage() {
   }
 
   return (
-    <div className="min-h-screen bg-amber-100 p-6">
+    <div className="min-h-screen p-6 bg-[rgba(139,69,19,0.1)]">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
@@ -113,7 +113,7 @@ export default function FinanceSupportPage() {
             <h1 className="text-3xl font-bold text-amber-800 mb-2">
               <TranslatedText translationKey="financeSupport" />
             </h1>
-            <p className="text-amber-600">
+            <p className="text-amber-800">
               <TranslatedText translationKey="discoverGovernmentSchemes" />
             </p>
           </div>
@@ -121,7 +121,7 @@ export default function FinanceSupportPage() {
         </div>
 
         {/* Search and Filters */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
+        <div className="bg-white rounded-lg shadow-sm p-6 mb-8 border-l-4 border-amber-700">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Search */}
             <div>
@@ -133,7 +133,7 @@ export default function FinanceSupportPage() {
                 placeholder="Search by scheme name, description, or category..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-4 py-2 border border-amber-300 rounded-md focus:ring-2 focus:ring-[#A67B5B] focus:border-[#8B5E3C] text-black"
+                className="w-full px-4 py-2 border border-amber-700 rounded-md focus:ring-2 focus:ring-[#8b4513] focus:border-[#8b4513] text-black"
               />
             </div>
 
@@ -145,7 +145,7 @@ export default function FinanceSupportPage() {
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full px-4 py-2 border border-amber-300 rounded-md focus:ring-2 focus:ring-[#A67B5B] focus:border-[#8B5E3C] text-black"
+                className="w-full px-4 py-2 border border-amber-700 rounded-md focus:ring-2 focus:ring-[#8b4513] focus:border-[#8b4513] text-black"
               >
                 {categories.map((category) => (
                   <option key={category} value={category}>
@@ -164,7 +164,7 @@ export default function FinanceSupportPage() {
         {/* Schemes Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredSchemes.map((scheme) => (
-            <div key={scheme.id} className="bg-amber-50 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+            <div key={scheme.id} className="bg-amber-50 rounded-lg shadow-sm hover:shadow-md transition-shadow border-2 border-amber-600">
               <div className="p-6">
                 <span className="inline-block px-3 py-1 text-xs font-medium bg-amber-100 text-amber-800 rounded-full mb-3">
                   {scheme.category}
@@ -206,7 +206,7 @@ export default function FinanceSupportPage() {
                   </button>
                   <button
                     onClick={() => window.open(scheme.pdfUrl, '_blank')}
-                    className="px-4 py-2 border border-amber-300 text-amber-700 rounded-md text-sm font-medium hover:bg-amber-50 transition-colors"
+                    className="px-4 py-2 border border-amber-700 text-amber-700 rounded-md text-sm font-medium hover:bg-amber-50 transition-colors"
                   >
                     📄
                   </button>
