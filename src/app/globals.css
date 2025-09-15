@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #e78d51; /* Cream background */
+  --background: #e4c8b5; /* Cream background */
   --foreground: #8b4513; /* Saddle brown text */
 }
 
@@ -62,11 +62,11 @@ body {
 
 /* Custom Utility Classes */
 .animate-scroll-down {
-  animation: scroll-down 90s linear infinite;
+  animation: scroll-down 120s linear infinite;
 }
 
 .animate-scroll-up {
-  animation: scroll-up 90s linear infinite;
+  animation: scroll-up 120s linear infinite;
 }
 
 .floating-card {
@@ -78,7 +78,7 @@ body {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(139, 69, 19, 0.15);
   outline: 2px solid #d2691e;
-  background-color: #ffffff !important;
+  background-color: #9e4040 !important;
 }
 
 /* Custom Scrollbar for Better UX */
