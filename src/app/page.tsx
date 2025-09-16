@@ -73,14 +73,14 @@ export default function Home() {
   bg-gradient-to-r from-amber-900/85 via-amber-800/80 to-amber-900/85 
   backdrop-blur-md shadow-md border-b border-amber-950/40">
 
-  {/* Brand / Logo */}
-  <div 
-    className="text-4xl font-extrabold tracking-wider text-amber-100 drop-shadow-md 
-               hover:scale-[1.05] transition-transform duration-500 ease-out" 
-    style={{ fontFamily: 'Cinzel Decorative, Cormorant Garamond, serif' }}
-  >
-    ARTISAN
-  </div>
+        {/* Brand / Logo */}
+        <div
+          className="text-4xl font-extrabold tracking-wider text-amber-100 drop-shadow-md 
+               hover:scale-[1.05] transition-transform duration-500 ease-out"
+          style={{ fontFamily: 'Cinzel Decorative, Cormorant Garamond, serif' }}
+        >
+          ARTISAN
+        </div>
 
         {/* Nav Links */}
         <div className="hidden gap-4 md:flex items-center">
@@ -94,37 +94,37 @@ export default function Home() {
               href={item.href}
               className="px-4 py-2 text-amber-100 tracking-wide font-medium 
                    transition-all duration-300 hover:text-amber-300"
-      >
-        {item.label}
-      </Link>
-    ))}
+            >
+              {item.label}
+            </Link>
+          ))}
 
-    {/* Login & Signup */}
-    <Link
-      href="/login"
-      className="px-4 py-2 border border-[#c9a86a] text-[#f0e68c] 
+          {/* Login & Signup */}
+          <Link
+            href="/login"
+            className="px-4 py-2 border border-[#c9a86a] text-[#f0e68c] 
                  rounded-md font-medium shadow-sm transition-all duration-300 
                  hover:bg-[#f0e68c] hover:text-[#5c3317] hover:scale-105"
-    >
-      Login
-    </Link>
-    <Link
-      href="/signup"
-      className="px-4 py-2 border border-[#c9a86a] text-[#f0e68c] 
+          >
+            Login
+          </Link>
+          <Link
+            href="/signup"
+            className="px-4 py-2 border border-[#c9a86a] text-[#f0e68c] 
                  rounded-md font-medium shadow-sm transition-all duration-300 
                  hover:bg-[#f0e68c] hover:text-[#5c3317] hover:scale-105"
-    >
-      Sign Up
-    </Link>
+          >
+            Sign Up
+          </Link>
 
-          
 
-    {/* Language Selector on extreme right */}
-    <div className="ml-4">
-      <LanguageSelector />
-    </div>
-  </div>
-</nav>
+
+          {/* Language Selector on extreme right */}
+          <div className="ml-4">
+            <LanguageSelector />
+          </div>
+        </div>
+      </nav>
 
 
 
@@ -137,29 +137,29 @@ export default function Home() {
 
       {/* Center statue - background removed */}
       {/* <main className="relative z-10 flex items-center justify-center"> */}
-        {/* <div className="pointer-events-none absolute inset-x-0 top-24 mx-auto h-[60vh] w-[60vh] max-w-[90vw] rounded-full bg-gradient-radial from-amber-800/20 via-transparent to-transparent shadow-[0_0_100px_60px_rgba(146,64,14,0.3)]" /> */}
-        <main className="flex flex-col items-center justify-center text-center">
-  {/* Heading above image */}
-  <br></br>
-  <br></br>
-  <h2
-    className="text-6xl font-bold text-amber-900 mb-1 drop-shadow-sm animate-fade-in-up delay-"
-    style={{ fontFamily: 'Cormorant Garamond, serif' }}
-  >
-    <TranslatedText translationKey="Welcome to our Artisan Marketplace " />
- 
-  </h2>
+      {/* <div className="pointer-events-none absolute inset-x-0 top-24 mx-auto h-[60vh] w-[60vh] max-w-[90vw] rounded-full bg-gradient-radial from-amber-800/20 via-transparent to-transparent shadow-[0_0_100px_60px_rgba(146,64,14,0.3)]" /> */}
+      <main className="flex flex-col items-center justify-center text-center">
+        {/* Heading above image */}
+        <br></br>
+        <br></br>
+        <h2
+          className="text-6xl font-bold text-amber-900 mb-1 drop-shadow-sm animate-fade-in-up delay-"
+          style={{ fontFamily: 'Cormorant Garamond, serif' }}
+        >
+          <TranslatedText translationKey="Welcome to our Artisan Marketplace " />
 
-  {/* Image below heading */}
-  <div className="relative mt-6 flex h-[65vh] w-[65vh] max-w-[92vw] items-center justify-center transition-all duration-1000 ease-out opacity-0 animate-fade-in-scale">
-    <img
-      src="\1-removebg-preview.png"
-      alt="center statue"
-      className="h-full w-full rounded-full object-contain drop-shadow-[0_20px_60px_rgba(40,37,8,0.6)] filter brightness-110 contrast-110 shadow-[0_0_100px_60px_rgba(150,64,14,0.3)]"
-      style={{ background: 'transparent' }}
-    />
-  </div>
-</main>
+        </h2>
+
+        {/* Image below heading */}
+        <div className="relative mt-6 flex h-[65vh] w-[65vh] max-w-[92vw] items-center justify-center transition-all duration-1000 ease-out opacity-0 animate-fade-in-scale">
+          <img
+            src="\1-removebg-preview.png"
+            alt="center statue"
+            className="h-full w-full rounded-full object-contain drop-shadow-[0_20px_60px_rgba(40,37,8,0.6)] filter brightness-110 contrast-110 shadow-[0_0_100px_60px_rgba(150,64,14,0.3)]"
+            style={{ background: 'transparent' }}
+          />
+        </div>
+      </main>
 
 
       {/* Decorative Image Divider 1 */}
@@ -182,9 +182,15 @@ export default function Home() {
       >
         {/* Background image layer */}
         <div
-          className="absolute inset-0 bg-[url('/bg1.jpg')] bg-cover bg-center bg-no-repeat opacity-40 pointer-events-none"
-        ></div>
-
+          className="absolute inset-0 z-0"
+          style={{
+            background: `url("/bg1.jpg")`,
+            backgroundSize: "auto",
+            backgroundPosition: "center",
+            filter: "blur(2px)",
+            transform: "scale(1.1)"
+          }}
+        />
         {/* Content */}
         <div className="relative max-w-7xl mx-auto px-6 py-20">
           <div className="text-center mb-16">
@@ -293,8 +299,15 @@ export default function Home() {
       >
         {/* Background image layer */}
         <div
-          className="absolute inset-0 bg-[url('/bg1.jpg')] bg-cover bg-center bg-no-repeat opacity-40 pointer-events-none"
-        ></div>
+          className="absolute inset-0 z-0"
+          style={{
+            background: `url("/bg1.jpg")`,
+            backgroundSize: "auto",
+            backgroundPosition: "center",
+            filter: "blur(2px)",
+            transform: "scale(1.1)"
+          }}
+        />
 
         <div className="relative max-w-7xl mx-auto px-6 py-20">
           {/* Heading */}
@@ -399,7 +412,18 @@ export default function Home() {
         className={`relative z-10 min-h-screen bg-[khaki]/20 flex items-center transition-all duration-1000 delay-500 ${missionInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
           }`}
       >
-        <div className="max-w-7xl mx-auto px-6 py-20">
+        <div
+          className="absolute inset-0 z-0"
+          style={{
+            background: `url("/bg1.jpg")`,
+            backgroundSize: "auto",
+            backgroundPosition: "center",
+            filter: "blur(2px)",
+            transform: "scale(1.1)"
+          }}
+        />
+
+        <div className="max-w-7xl mx-auto px-6 py-20 z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
 
             {/* Left Content */}
@@ -455,7 +479,17 @@ Together, we celebrate culture while shaping a brighter, fairer future for artis
         className={`relative z-10 min-h-screen bg-[khaki]/40 flex items-center transition-all duration-1000 delay-600 ${impactInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
           }`}
       >
-        <div className="max-w-7xl mx-auto px-6 py-20">
+        <div
+          className="absolute inset-0 z-0"
+          style={{
+            background: `url("/bg1.jpg")`,
+            backgroundSize: "auto",
+            backgroundPosition: "center",
+            filter: "blur(2px)",
+            transform: "scale(1.1)"
+          }}
+        />
+        <div className="max-w-7xl mx-auto px-6 py-20 z-10">
           <div className="text-center mb-16">
             <h2 className="text-7xl font-bold text-amber-900 mb-6 drop-shadow-sm" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
               <TranslatedText translationKey="globalImpact" />
@@ -514,6 +548,16 @@ Together, we celebrate culture while shaping a brighter, fairer future for artis
         className={`relative z-10 min-h-screen bg- flex items-center transition-all duration-1000 delay-700 ${communityInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
           }`}
       >
+        <div
+          className="absolute inset-0 z-0"
+          style={{
+            background: `url("/bg1.jpg")`,
+            backgroundSize: "auto",
+            backgroundPosition: "center",
+            filter: "blur(2px)",
+            transform: "scale(1.1)"
+          }}
+        />
         <div className="max-w-7xl mx-auto px-6 py-20">
           <div className="text-center mb-16">
             <h2 className="text-7xl font-bold text-amber-900 mb-6 drop-shadow-sm" style={{ fontFamily: 'Cormorant Garamond, serif' }}>
