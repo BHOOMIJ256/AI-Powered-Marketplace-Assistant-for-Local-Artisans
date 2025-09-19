@@ -21,45 +21,8 @@ An MVP web platform that helps artisans showcase products, sell online, and grow
 
 ## Architecture Overview
 
-```mermaid
-flowchart TD
-  subgraph Browser
-    UI[Next.js Pages & Components]
-    Lang[Language Selector]
-    ARBtn[AR Try-On Button]
-    StoryTool[Story Generator UI]
-  end
+<img width="3840" height="811" alt="Flowchart _ Mermaid Chart-2025-09-17-163239" src="https://github.com/user-attachments/assets/be5a4aaa-8df3-40b3-925a-c2f4665d34bc" />
 
-  subgraph Next.js (Node)
-    APIAuth[/api/auth, /api/login, /api/logout, /api/buyer/*/]
-    APIProducts[/api/products]
-    APIOrders[/api/orders, /api/orders/:id/complete]
-    APIPosts[/api/posts]
-    APIInsights[/api/insights/*]
-    APISchemes[/api/schemes]
-    APITranslate[/api/translate]
-    APIStory[/api/storytelling]
-    APIAR[/api/ar-tryon]
-    Prisma[(Prisma + SQLite)]
-  end
-
-  subgraph Python Services
-    FastAPI[FastAPI: /generate-story]
-    Flask[Flask: /api/ar-tryon]
-    ARScript[[center_virtual_tryon.py]]
-  end
-
-  UI -->|fetch| APIProducts
-  UI -->|fetch| APIOrders
-  UI -->|fetch| APIPosts
-  UI -->|fetch| APIInsights
-  Lang -->|POST text(s)| APITranslate
-  StoryTool -->|multipart image+audio/note| APIStory --> FastAPI
-  ARBtn -->|image URL| APIAR --> Flask --> ARScript
-  API* --> Prisma
-```
-
----
 
 ## Monorepo Layout
 - `src/app` UI pages for buyer, artisan dashboard, insights, marketing, finance support, etc.
