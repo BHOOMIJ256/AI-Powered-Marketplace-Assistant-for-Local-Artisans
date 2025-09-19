@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { languages, Locale } from '@/lib/i18n';
 import { SupportedLanguage } from '@/lib/translate';
+import { translations } from '@/lib/translations';
 
 interface LanguageContextType {
   currentLocale: Locale;
@@ -34,10 +35,8 @@ export function LanguageProvider({ children, initialLocale = 'en' }: { children:
 
   // Synchronous translation (for immediate display, falls back to English)
   const tSync = (key: string) => {
-    // Import translations dynamically to avoid circular dependencies
-    const translations = require('@/lib/translations').translations;
-    return translations[currentLocale]?.[key] || translations.en[key] || key;
-  };
+  return translations[currentLocale]?.[key] || translations.en[key] || key;
+};
 
   // Asynchronous translation using Google Translate
   const t = async (key: string): Promise<string> => {

@@ -183,7 +183,7 @@ export default function BuyerSignupPage() {
                     id={id}
                     name={id}
                     type={type}
-                    value={(formData as any)[id]}
+                    value={formData[id as keyof typeof formData]}
                     onChange={handleChange}
                     required={required}
                     className="w-full px-4 py-3 rounded-xl border border-amber-200 bg-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-400 text-amber-900 text-sm"
