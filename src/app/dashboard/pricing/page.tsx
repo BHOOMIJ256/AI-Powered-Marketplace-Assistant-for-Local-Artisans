@@ -57,7 +57,7 @@ export default function PricingPage() {
 	const seasonalMax = useMemo(() => Math.max(1, ...seasonal.map(s => s.orders)), [seasonal]);
 
 	return (
-		<div className="space-y-4 bg-amber-100 min-h-[calc(100vh-8rem)] p-4">
+		<div className="min-h-screen p-6 bg-[rgba(139,69,19,0.1)]">
 			<h1 className="text-xl font-semibold text-amber-800">Pricing & Trend Analytics</h1>
 
 			{loading && (

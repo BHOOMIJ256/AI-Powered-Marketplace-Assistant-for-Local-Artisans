@@ -85,7 +85,7 @@ export default function BuyerLoginPage() {
   return (
     <div className="min-h-screen overflow-hidden relative font-sans">
       {/* Background grid */}
-      <div className="fixed inset-0 grid grid-cols-5 gap-4 p-4">
+      <div className="fixed inset-0 grid grid-cols-5 gap-4 p-4 blur-[2px]">
         {[0, 1, 2, 3, 4].map((columnIndex) => (
           <div
             key={columnIndex}
@@ -116,10 +116,10 @@ export default function BuyerLoginPage() {
       </div>
 
       {/* Navbar (from old page) */}
-      <nav className="sticky top-0 z-50 mx-auto flex w-full items-center justify-between px-10 py-4 
-        bg-gradient-to-r from-amber-900/85 via-amber-800/80 to-amber-900/85 
+      <nav className="fixed top-0 left-0 right-0 z-20 mx-auto flex w-full items-center justify-between px-10 py-4 
+        bg-amber-900/85  
         backdrop-blur-md shadow-md border-b border-amber-950/40">
-        
+
         {/* Brand / Logo */}
         <Link
           href="/"
@@ -233,11 +233,7 @@ export default function BuyerLoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 rounded-xl text-white font-semibold text-sm shadow-md transition-all duration-200 hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98]"
-                style={{
-                  background:
-                    "linear-gradient(135deg, #d2691e 0%, #cd853f 100%)",
-                }}
+                className="w-full py-3 rounded-xl text-amber-100 font-semibold text-sm shadow-md transition-all duration-200 hover:shadow-lg transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed bg-amber-800 hover:bg-amber-800"
               >
                 {loading ? "Signing in..." : <TranslatedText translationKey="login" />}
               </button>

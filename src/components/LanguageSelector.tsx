@@ -14,7 +14,7 @@ export default function LanguageSelector() {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center space-x-2 px-3 py-2 border rounded-md 
-                   bg-[#f0e68c] text-[#5c3317] hover:bg-[#e6da82]"
+                   bg-[#C9A96E] text-[#5c3317] hover:bg-[#e6da82]"
       >
         <span>{getLanguageFlag(currentLocale)}</span>
         <span className="hidden sm:inline">{getLanguageName(currentLocale)}</span>

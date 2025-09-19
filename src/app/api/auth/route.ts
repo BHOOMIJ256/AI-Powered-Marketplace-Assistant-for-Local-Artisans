@@ -7,95 +7,93 @@ import { ApiResponse, User } from '@/types';
 
 export async function POST(request: NextRequest) {
   try {
-    let body: any;
+    let body;
     
-    // Check content type and parse accordingly
+    // Handle both JSON and form data
     const contentType = request.headers.get('content-type');
     
     if (contentType?.includes('application/json')) {
-      // Handle JSON data
       body = await request.json();
-    } else if (contentType?.includes('application/x-www-form-urlencoded')) {
-      // Handle form data
+    } else if (contentType?.includes('application/x-www-form-urlencoded') || contentType?.includes('multipart/form-data')) {
       const formData = await request.formData();
       body = {};
       
       // Convert FormData to object
       for (const [key, value] of formData.entries()) {
-        if (key === 'languages') {
-          // Handle languages as array if it's sent as comma-separated or multiple values
-          if (body[key]) {
-            // If key already exists, make it an array
-            body[key] = Array.isArray(body[key]) ? [...body[key], value] : [body[key], value];
-          } else {
-            // Try to parse as JSON array first, fallback to splitting by comma
-            try {
-              body[key] = JSON.parse(value as string);
-            } catch {
-              body[key] = (value as string).split(',').map(lang => lang.trim()).filter(Boolean);
-            }
-          }
-        } else if (key === 'age') {
-          // Convert age to number
-          body[key] = value ? parseInt(value as string, 10) : undefined;
-        } else {
-          body[key] = value === '' ? undefined : value;
+        if (typeof value === 'string') {
+          body[key] = value || undefined;
         }
       }
+      
+      // Remove empty string values
+      Object.keys(body).forEach(key => {
+        if (body[key] === '') {
+          body[key] = undefined;
+        }
+      });
     } else {
-      // Handle raw form data (URLSearchParams)
-      const formData = await request.text();
-      const params = new URLSearchParams(formData);
-      body = {};
-      
-      for (const [key, value] of params.entries()) {
-        if (key === 'languages') {
-          // Handle languages array
-          try {
-            body[key] = JSON.parse(value);
-          } catch {
-            body[key] = value.split(',').map(lang => lang.trim()).filter(Boolean);
-          }
-        } else if (key === 'age') {
-          body[key] = value ? parseInt(value, 10) : undefined;
-        } else {
-          body[key] = value === '' ? undefined : value;
-        }
-      }
-    }
-
-    console.log('Parsed body:', body); // Debug log
-
-    // Validate input data
-    const validationResult = artisanRegistrationSchema.safeParse(body);
-    
-    if (!validationResult.success) {
-      console.error('Validation failed:', validationResult.error);
-      
-      return NextResponse.json<ApiResponse<any>>({
+      return NextResponse.json<ApiResponse<null>>({
         success: false,
-        message: 'Validation failed',
-        error: validationResult.error.issues?.[0]?.message || 'Invalid input data',
-        data: validationResult.error.issues // Send all validation issues
+        message: 'Unsupported content type',
+        error: 'Content-Type must be application/json or application/x-www-form-urlencoded',
+        data: null
       }, { status: 400 });
     }
 
-    const {
-      name,
-      email,
-      phone,
-      password,
-      gender,
-      age,
-      address,
-      city,
-      state,
-      district,
-      pincode,
-      craftType,
-      experience,
-      languages
-    } = validationResult.data;
+    // Add default values for required fields if not present
+    const processedBody = {
+      ...body,
+      city: body.city || "Not Specified",
+      state: body.state || "Not Specified",
+      // Convert empty email to null
+      email: body.email || null,
+    };
+
+    // Validate input data with a more flexible schema for basic signup
+    const basicSignupData = {
+      name: processedBody.name,
+      email: processedBody.email,
+      phone: processedBody.phone,
+      password: processedBody.password,
+      city: processedBody.city,
+      state: processedBody.state,
+    };
+
+    // Basic validation without the full artisan schema
+    if (!basicSignupData.name || !basicSignupData.phone || !basicSignupData.password) {
+      return NextResponse.json<ApiResponse<null>>({
+        success: false,
+        message: 'Missing required fields',
+        error: 'Name, phone, and password are required',
+        data: null
+      }, { status: 400 });
+    }
+
+    // Validate phone number format (basic validation)
+    const phoneRegex = /^\+?[\d\s\-\(\)]{10,15}$/;
+    if (!phoneRegex.test(basicSignupData.phone)) {
+      return NextResponse.json<ApiResponse<null>>({
+        success: false,
+        message: 'Invalid phone number format',
+        error: 'Please enter a valid phone number',
+        data: null
+      }, { status: 400 });
+    }
+
+    // Validate email if provided
+    if (basicSignupData.email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(basicSignupData.email)) {
+        return NextResponse.json<ApiResponse<null>>({
+          success: false,
+          message: 'Invalid email format',
+          error: 'Please enter a valid email address',
+          data: null
+        }, { status: 400 });
+      }
+    }
+
+    const { name, email, phone, password, city, state } = basicSignupData;
 
     // Check if user already exists
     const existingUser = await db.user.findFirst({
@@ -119,24 +117,25 @@ export async function POST(request: NextRequest) {
     // Hash password
     const hashedPassword = await hashPassword(password);
 
-    // Create new user
+    // Create new user with minimal required data
     const created = await db.user.create({
       data: {
         name,
         email: email || null,
         phone,
         password: hashedPassword,
-        gender: gender || null,
-        age: age || null,
-        address: address || null,
         city,
         state,
-        district: district || null,
-        pincode: pincode || null,
-        craftType: craftType || null,
-        experience: experience || null,
-        languages: Array.isArray(languages) ? JSON.stringify(languages) : (languages ?? null),
-        role: "artisan"
+        role: "artisan",
+        // Set optional fields to null
+        gender: null,
+        age: null,
+        address: null,
+        district: null,
+        pincode: null,
+        craftType: null,
+        experience: null,
+        languages: null,
       },
       select: {
         id: true,

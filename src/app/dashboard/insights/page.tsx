@@ -85,20 +85,20 @@ export default function InsightsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-amber-100 p-6">
+      <div className="min-h-screen p-6 bg-[rgba(139,69,19,0.1)]">
         <div className="max-w-7xl mx-auto">
           <div className="animate-pulse">
-            <div className="h-8 bg-amber-200 rounded w-1/4 mb-6"></div>
+            <div className="h-8 bg-[rgba(139,69,19,0.1)] rounded w-1/4 mb-6"></div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 bg-white rounded-lg shadow p-6">
-                <div className="h-6 bg-amber-200 rounded w-1/3 mb-4"></div>
-                <div className="h-64 bg-amber-200 rounded"></div>
+                <div className="h-6 bg-[rgba(139,69,19,0.1)] rounded w-1/3 mb-4"></div>
+                <div className="h-64 bg-[rgba(139,69,19,0.1)] rounded"></div>
               </div>
               <div className="bg-white rounded-lg shadow p-6">
-                  <div className="h-6 bg-amber-200 rounded w-1/2 mb-4"></div>
+                  <div className="h-6 bg-[rgba(139,69,19,0.1)] rounded w-1/2 mb-4"></div>
                 <div className="space-y-3">
                   {[1, 2, 3].map((i) => (
-                      <div key={i} className="h-4 bg-amber-200 rounded w-full"></div>
+                      <div key={i} className="h-4 bg-[rgba(139,69,19,0.1)] rounded w-full"></div>
                   ))}
                 </div>
               </div>
@@ -111,7 +111,7 @@ export default function InsightsPage() {
 
   if (!insights) {
     return (
-      <div className="min-h-screen bg-amber-100 p-6">
+      <div className="min-h-screen p-6 bg-[rgba(139,69,19,0.1)]">
         <div className="max-w-7xl mx-auto text-center py-12">
           <div className="text-amber-400 text-6xl mb-4">📊</div>
           <h3 className="text-lg font-medium text-amber-800 mb-2">
@@ -126,7 +126,7 @@ export default function InsightsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-amber-100 p-6">
+    <div className="min-h-screen p-6 bg-[rgba(139,69,19,0.1)]">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
@@ -134,7 +134,7 @@ export default function InsightsPage() {
             <h1 className="text-3xl font-bold text-amber-800 mb-2">
               <TranslatedText translationKey="customerInsights" />
             </h1>
-            <p className="text-amber-600">
+            <p className="text-amber-800">
               <TranslatedText translationKey="understandYourCustomers" />
             </p>
           </div>
@@ -143,7 +143,7 @@ export default function InsightsPage() {
 
         {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="bg-white rounded-lg shadow-sm p-6 border-l-4 border-amber-800">
             <div className="flex items-center">
               <div className="p-2 bg-blue-100 rounded-lg">
                 <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -159,7 +159,7 @@ export default function InsightsPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="bg-white rounded-lg shadow-sm p-6 border-l-4 border-amber-800">
             <div className="flex items-center">
               <div className="p-2 bg-green-100 rounded-lg">
                 <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -175,7 +175,7 @@ export default function InsightsPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="bg-white rounded-lg shadow-sm p-6 border-l-4 border-amber-800">
             <div className="flex items-center">
               <div className="p-2 bg-purple-100 rounded-lg">
                 <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -191,7 +191,7 @@ export default function InsightsPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="bg-white rounded-lg shadow-sm p-6 border-l-4 border-amber-800">
             <div className="flex items-center">
               <div className="p-2 bg-orange-100 rounded-lg">
                 <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -213,7 +213,7 @@ export default function InsightsPage() {
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Map */}
-          <div className="lg:col-span-2 bg-white rounded-lg shadow-sm">
+          <div className="lg:col-span-2 bg-white rounded-lg shadow-sm border-l-4 border-amber-800">
             <div className="px-6 py-4 border-b">
               <h2 className="text-lg font-semibold text-amber-800">
                 <TranslatedText translationKey="locationWiseDemand" />
@@ -228,7 +228,7 @@ export default function InsightsPage() {
           </div>
 
           {/* Top Products */}
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="bg-white rounded-lg shadow-sm p-6 border-l-4 border-amber-800">
             <h2 className="text-lg font-semibold mb-4 text-amber-800">
               <TranslatedText translationKey="topProducts" />
             </h2>
@@ -256,7 +256,7 @@ export default function InsightsPage() {
         {/* Bottom Row */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
           {/* Top Regions */}
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="bg-white rounded-lg shadow-sm p-6 border-l-4 border-amber-800">
             <h2 className="text-lg font-semibold mb-4 text-amber-800">
               <TranslatedText translationKey="topRegions" />
             </h2>
@@ -281,7 +281,7 @@ export default function InsightsPage() {
           </div>
 
           {/* Buyer Preferences */}
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="bg-white rounded-lg shadow-sm p-6 border-l-4 border-amber-800">
             <h2 className="text-lg font-semibold mb-4 text-amber-800">
               <TranslatedText translationKey="buyerPreferences" />
             </h2>

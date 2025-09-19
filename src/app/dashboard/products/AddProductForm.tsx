@@ -219,12 +219,8 @@ export default function AddProductForm() {
         )}
       </div>
       
-      <button 
-        type="submit"
-        disabled={isSubmitting}
-        className="w-full rounded-md bg-[#8B5E3C] hover:bg-[#A67B5B] text-[#F5F5DC] py-2.5 font-medium transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
-      >
-        {isSubmitting ? "Creating..." : t("createProduct")}
+      <button className="w-full rounded-md bg-[#8b4513] hover:bg-[#A67B5B] text-[#F5F5DC] py-2.5 font-medium transition-colors">
+        {t("createProduct")}
       </button>
       
       <p className="text-xs text-amber-800">

@@ -2,198 +2,237 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import Link from "next/link";
-import LanguageSelector from "@/components/LanguageSelector";
 import TranslatedText from "@/components/TranslatedText";
 import MapView from "./MapView";
-
-type SalesPoint = { key: string; amount: number };
 
 export default async function DashboardPage() {
   const cookieStore = await cookies();
   const userId = cookieStore.get("session_user")?.value;
   const buyerSession = cookieStore.get("session_buyer");
 
-  // Redirect buyers to buyer page
   if (buyerSession) redirect("/buyer");
-
-  // Redirect to login if not authenticated
   if (!userId) redirect("/login");
 
-  // Get user data and verify they are an artisan
   const user = await db.user.findUnique({
     where: { id: userId },
-    select: { id: true, name: true, role: true }
+    select: { id: true, name: true, role: true },
   });
 
   if (!user || user.role !== "artisan") {
     redirect("/login");
   }
 
-  // Get dashboard data
   const [totalSales, pendingOrders, completedOrders, recentOrders] =
     await Promise.all([
       db.order.aggregate({
         where: { artisanId: userId, status: "completed" },
-        _sum: { totalAmount: true }
+        _sum: { totalAmount: true },
       }),
-      db.order.count({
-        where: { artisanId: userId, status: "pending" }
-      }),
-      db.order.count({
-        where: { artisanId: userId, status: "completed" }
-      }),
+      db.order.count({ where: { artisanId: userId, status: "pending" } }),
+      db.order.count({ where: { artisanId: userId, status: "completed" } }),
       db.order.findMany({
         where: { artisanId: userId },
         orderBy: { createdAt: "desc" },
         take: 5,
         include: {
           buyer: { select: { name: true, city: true, state: true } },
-          items: { include: { product: { select: { name: true } } } }
-        }
-      })
+          items: { include: { product: { select: { name: true } } } },
+        },
+      }),
     ]);
 
   const salesAmount = totalSales._sum.totalAmount || 0;
 
+  const navbarAmber = "#8b4513";
+  const beige = "#FAF3E0";
+
   return (
-    <div className="min-h-screen bg-amber-100">
-      {/* Header */}
-      <header className="bg-white shadow border-b-4 border-[#8B4513]">
-        <div className="w-full px-6">
-          <div className="flex justify-between items-center h-16">
-            {/* Dashboard Title */}
-            <h1 className="text-xl font-semibold text-[#8B4513]">
-              <TranslatedText translationKey="dashboard" />
-            </h1>
+    <div className="min-h-screen space-y-8">
+      {/* Welcome Header */}
+      <div
+        className="rounded-lg p-8 shadow-md"
+        style={{
+          backgroundColor: beige,
+          borderLeft: `6px solid ${navbarAmber}`,
+        }}
+      >
+        <h1
+          className="text-3xl font-bold mb-2"
+          style={{ fontFamily: "Cinzel, serif", color: "#8b4513" }}
+        >
+          Welcome {user.name}!
+        </h1>
+        <p className="text-[#4a2c21] text-lg">
+          Your craft business dashboard - where tradition meets commerce
+        </p>
+      </div>
 
-            {/* Language + Logout */}
-            <div className="flex items-center gap-4">
-              <LanguageSelector />
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[
+          {
+            label: <TranslatedText translationKey="totalSales" />,
+            value: `₹${(salesAmount / 100).toFixed(2)}`,
+            note: "Total Revenue Earned",
+          },
+          {
+            label: <TranslatedText translationKey="pendingOrders" />,
+            value: pendingOrders,
+            note: "Orders to Process",
+          },
+          {
+            label: <TranslatedText translationKey="completedOrders" />,
+            value: completedOrders,
+            note: "Successfully Delivered",
+          },
+          {
+            label: <TranslatedText translationKey="totalOrders" />,
+            value: pendingOrders + completedOrders,
+            note: "Total Business Volume",
+          },
+        ].map((card, i) => (
+          <div
+            key={i}
+            className="rounded-lg p-6 shadow-md hover:shadow-lg transition transform hover:scale-[1.02]"
+            style={{
+              backgroundColor: beige,
+              borderLeft: `6px solid ${navbarAmber}`,
+            }}
+          >
+            <div className="text-2xl font-bold mb-2" style={{ color: navbarAmber }}>
+              {card.value}
             </div>
-          </div>
-        </div>
-      </header>
-
-
-
-      {/* Dashboard Content */}
-      
-      <div className="w-full px-6 py-8 space-y-8">
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-white border rounded-lg p-6 shadow-sm">
-            <h3 className="text-sm font-medium text-gray-500">
-              <TranslatedText translationKey="totalSales" />
+            <h3
+              className="text-sm font-bold uppercase tracking-wide mb-1"
+              style={{ fontFamily: "Cinzel, serif", color: "8b4513" }}
+            >
+              {card.label}
             </h3>
-            <p className="text-2xl font-bold text-green-700 mt-2">
-              ₹{(salesAmount / 100).toFixed(2)}
-            </p>
+            <p className="text-sm text-[#4a2c21]">{card.note}</p>
           </div>
+        ))}
+      </div>
 
-          <div className="bg-white border rounded-lg p-6 shadow-sm">
-            <h3 className="text-sm font-medium text-gray-500">
-              <TranslatedText translationKey="pendingOrders" />
-            </h3>
-            <p className="text-2xl font-bold text-yellow-600 mt-2">
-              {pendingOrders}
-            </p>
-          </div>
-
-          <div className="bg-white border rounded-lg p-6 shadow-sm">
-            <h3 className="text-sm font-medium text-gray-500">
-              <TranslatedText translationKey="completedOrders" />
-            </h3>
-            <p className="text-2xl font-bold text-blue-600 mt-2">
-              {completedOrders}
-            </p>
-          </div>
-
-          <div className="bg-white border rounded-lg p-6 shadow-sm">
-            <h3 className="text-sm font-medium text-gray-500">
-              <TranslatedText translationKey="totalOrders" />
-            </h3>
-            <p className="text-2xl font-bold text-purple-600 mt-2">
-              {pendingOrders + completedOrders}
-            </p>
-          </div>
-        </div>
-
-        {/* Action Buttons */}
+      {/* Business Actions */}
+      <div
+        className="rounded-lg p-8 shadow-md"
+        style={{
+          backgroundColor: beige,
+          borderLeft: `6px solid ${navbarAmber}`,
+        }}
+      >
+        <h2
+          className="text-xl font-bold mb-6"
+          style={{ fontFamily: "Cinzel, serif", color: "8b4513" }}
+        >
+          Business Actions
+        </h2>
         <div className="flex flex-wrap gap-4">
           <Link
             href="/dashboard/products"
-            className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 shadow-sm"
+            className="px-6 py-3 rounded-md font-semibold border transition-all"
+            style={{
+              backgroundColor: beige,
+              borderColor: navbarAmber,
+              color: navbarAmber,
+            }}
           >
             <TranslatedText translationKey="manageProducts" />
           </Link>
-
           <Link
             href={`/artisan/${userId}`}
-            className="bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700 shadow-sm"
+            className="px-6 py-3 rounded-md font-semibold border transition-all"
+            style={{
+              backgroundColor: beige,
+              borderColor: navbarAmber,
+              color: navbarAmber,
+            }}
           >
             <TranslatedText translationKey="viewPublicProfile" />
           </Link>
-
-          
         </div>
+      </div>
 
-        {/* Recent Orders */}
-        <div className="bg-white border rounded-lg shadow-sm">
-          <div className="px-6 py-4 border-b border-black">
-            <h2 className="text-lg font-semibold text-amber-800">
-              <TranslatedText translationKey="recentOrders" />
-            </h2>
-          </div>
-          <div className="p-6">
-            {recentOrders.length === 0 ? (
-              <p className="text-gray-500 text-center py-4">
-                <TranslatedText translationKey="noOrders" />
-              </p>
-            ) : (
-              <div className="space-y-4">
-                {recentOrders.map((order) => (
-                  <div
-                    key={order.id}
-                    className="flex items-center justify-between p-4 border border-amber-800 rounded-md hover:bg-gray-50"
-                  >
-                    <div>
-                      <p className="font-medium text-gray-800">
-                        <TranslatedText translationKey="order" /> #
-                        {order.id.slice(-8)}
-                      </p>
-                      <p className="text-sm text-gray-600">
-                        {order.buyer.name} - {order.buyer.city},{" "}
-                        {order.buyer.state}
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        ₹{(order.totalAmount / 100).toFixed(2)} • {order.status}
-                      </p>
-                    </div>
-                    <Link
-                      href={`/dashboard/orders/${order.id}`}
-                      className="text-blue-600 hover:underline text-sm"
-                    >
-                      <TranslatedText translationKey="viewDetails" />
-                    </Link>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+      {/* Recent Orders */}
+      <div
+        className="rounded-lg shadow-md"
+        style={{
+          backgroundColor: beige,
+          borderLeft: `6px solid ${navbarAmber}`,
+        }}
+      >
+        <div className="p-6 border-b border-[#e6d4c8]">
+          <h2
+            className="text-xl font-bold"
+            style={{ fontFamily: "Cinzel, serif", color: "8b4513" }}
+          >
+            <TranslatedText translationKey="recentOrders" />
+          </h2>
         </div>
-
-
-        {/* Customer Insights */}
-        <div className="bg-white border rounded-lg shadow-sm">
-          <div className="px-6 py-4 border-b">
-            <h2 className="text-lg font-semibold text-amber-800">
-              <TranslatedText translationKey="customerInsights" />
-            </h2>
-            <p className="text-sm text-gray-600">
-              <TranslatedText translationKey="locationWiseDemand" />
+        <div className="p-6">
+          {recentOrders.length === 0 ? (
+            <p className="text-center text-[#4a2c21]">
+              <TranslatedText translationKey="noOrders" /> <br />
+              New orders will appear here
             </p>
-          </div>
-          <div className="p-6">
+          ) : (
+            <div className="space-y-4">
+              {recentOrders.map((order) => (
+                <div
+                  key={order.id}
+                  className="rounded-md p-4 shadow-sm hover:shadow-md transition transform hover:scale-[1.01]"
+                  style={{
+                    backgroundColor: beige,
+                    border: `1px solid ${navbarAmber}`,
+                  }}
+                >
+                  <p className="font-bold" style={{ color: "8b4513" }}>
+                    <TranslatedText translationKey="order" /> #
+                    {order.id.slice(-8)}
+                  </p>
+                  <p className="text-sm text-[#4a2c21]">
+                    {order.buyer.name} • {order.buyer.city},{" "}
+                    {order.buyer.state}
+                  </p>
+                  <Link
+                    href={`/dashboard/orders/${order.id}`}
+                    className="inline-block mt-2 px-4 py-2 rounded-md text-sm font-bold border transition-all"
+                    style={{
+                      backgroundColor: beige,
+                      borderColor: navbarAmber,
+                      color: navbarAmber,
+                    }}
+                  >
+                    <TranslatedText translationKey="viewDetails" />
+                  </Link>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Insights */}
+      <div
+        className="rounded-lg shadow-md"
+        style={{
+          backgroundColor: beige,
+          borderLeft: `6px solid ${navbarAmber}`,
+        }}
+      >
+        <div className="p-6 border-b border-[#e6d4c8]">
+          <h2
+            className="text-xl font-bold"
+            style={{ fontFamily: "Cinzel, serif", color: "8b4513" }}
+          >
+            <TranslatedText translationKey="customerInsights" />
+          </h2>
+        </div>
+        <div className="p-6">
+          <div
+            className="rounded-md p-4"
+            style={{ backgroundColor: beige, border: `1px solid ${navbarAmber}` }}
+          >
             <MapView />
           </div>
         </div>
