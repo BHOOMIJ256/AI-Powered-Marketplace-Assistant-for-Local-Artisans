@@ -1,29 +1,28 @@
-// app/api/posts/route.ts - Updated for SQLite schema
-import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
+// app/api/posts/route.ts
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { title, description, caption, hashtags, imageUrl, userId } = body;
 
-    if (!title || !description || !userId) {
+    // Validate required fields
+    if (!title || !description || !caption || !userId) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: "Missing required fields" },
         { status: 400 }
       );
     }
 
-    // Convert hashtags array to JSON string for SQLite
-    const hashtagsJson = hashtags ? JSON.stringify(hashtags) : '[]';
-
+    // Create the post in database
     const post = await db.post.create({
       data: {
         title,
         description,
-        caption: caption || '',
-        hashtags: hashtagsJson,
-        imageUrl,
+        caption,
+        hashtags: JSON.stringify(hashtags || []), // Store as JSON string
+        imageUrl: imageUrl || null,
         userId,
       },
       select: {
@@ -34,20 +33,20 @@ export async function POST(request: NextRequest) {
         hashtags: true,
         imageUrl: true,
         createdAt: true,
-      },
+      }
     });
 
-    // Parse hashtags back to array for response
-    const responsePost = {
+    // Return post with parsed hashtags for immediate use
+    const postWithParsedHashtags = {
       ...post,
-      hashtags: JSON.parse(post.hashtags)
+      hashtags: JSON.parse(post.hashtags || '[]')
     };
 
-    return NextResponse.json(responsePost);
+    return NextResponse.json(postWithParsedHashtags);
   } catch (error) {
-    console.error('Error creating post:', error);
+    console.error("Error creating post:", error);
     return NextResponse.json(
-      { error: 'Failed to create post' },
+      { error: "Failed to create post" },
       { status: 500 }
     );
   }
@@ -60,7 +59,7 @@ export async function GET(request: NextRequest) {
 
     if (!userId) {
       return NextResponse.json(
-        { error: 'User ID is required' },
+        { error: "userId is required" },
         { status: 400 }
       );
     }
@@ -77,21 +76,21 @@ export async function GET(request: NextRequest) {
         createdAt: true,
       },
       orderBy: {
-        createdAt: 'desc',
-      },
+        createdAt: 'desc'
+      }
     });
 
-    // Parse hashtags JSON strings back to arrays
+    // Parse hashtags for all posts
     const postsWithParsedHashtags = posts.map(post => ({
       ...post,
-      hashtags: JSON.parse(post.hashtags)
+      hashtags: JSON.parse(post.hashtags || '[]')
     }));
 
     return NextResponse.json(postsWithParsedHashtags);
   } catch (error) {
-    console.error('Error fetching posts:', error);
+    console.error("Error fetching posts:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch posts' },
+      { error: "Failed to fetch posts" },
       { status: 500 }
     );
   }

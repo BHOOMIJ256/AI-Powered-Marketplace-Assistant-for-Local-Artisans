@@ -13,8 +13,14 @@ import threading
 import time
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for frontend requests
-
+CORS(app, origins=[
+    "http://localhost:3000",
+    "http://127.0.0.1:3000", 
+    "https://*.railway.app",     # Allow Railway domains
+    "https://*.vercel.app",      # If frontend deployed on Vercel
+    "https://*.netlify.app",     # If frontend deployed on Netlify
+    # Add your actual production domain here when you get one
+], supports_credentials=True)
 # Store active AR processes
 active_sessions = {}
 
@@ -198,11 +204,22 @@ def health_check():
     })
 
 if __name__ == '__main__':
-    # Make sure the AR script exists
-    if not os.path.exists('center_virtual_tryon.py'):
-        print("Warning: center_virtual_tryon.py not found in current directory")
-        print("Please make sure the AR script is in the same directory as this backend service")
+    import os
     
-    print("Starting AR Try-On Backend Service...")
-    print("Service will be available at: http://localhost:8001")
-    app.run(host='0.0.0.0', port=8002, debug=True)
+    # Check if AR script exists
+    if not os.path.exists('center_virtual_tryon.py'):
+        print("Warning: center_virtual_tryon.py not found")
+        print("AR functionality will be limited")
+    
+    # Railway provides PORT environment variable
+    port = int(os.environ.get('PORT', 8002))
+    
+    print(f"Starting AR Try-On Service on port {port}")
+    print("Note: Camera functionality may be limited in cloud environment")
+    print(f"Service will be available at: http://0.0.0.0:{port}")
+    
+    app.run(
+        host='0.0.0.0', 
+        port=port, 
+        debug=False  # Always False in production
+    )

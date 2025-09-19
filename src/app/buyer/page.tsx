@@ -146,6 +146,7 @@ export default function BuyerPage() {
         body: JSON.stringify({
           items: orderItems,
           totalAmount: cartTotal,
+          deliveryAddress: deliveryAddress, // Include address in the request
         }),
       });
 
@@ -339,7 +340,6 @@ export default function BuyerPage() {
                         <ARTryOn
                           productImageUrl={product.imageUrl || ""}
                           productName={product.name}
-                          hideIcon={true}
                         />
                       </div>
                     </div>
@@ -350,16 +350,15 @@ export default function BuyerPage() {
           </div>
 
           {/* Cart Sidebar - Shifted Down and Repositioned */}
-          {/* Cart Sidebar - Shifted Down and Repositioned */}
-<div className="fixed right-4 top-32 w-96 h-[calc(100vh-8rem)] overflow-y-auto z-20">
-  <div className="p-4">
-    <div className="bg-[#f5f5dc] backdrop-blur-sm rounded-lg shadow-md overflow-hidden border-l-4 border-amber-900">
-      {/* Cart Header */}
-      <div className="p-6 border-b border-amber-700">
-        <h3 className="text-lg font-semibold text-amber-900">
-          <TranslatedText translationKey="cart" />
-        </h3>
-      </div>
+          <div className="fixed right-4 top-32 w-96 h-[calc(100vh-8rem)] overflow-y-auto z-20">
+            <div className="p-4">
+              <div className="bg-[#f5f5dc] backdrop-blur-sm rounded-lg shadow-md overflow-hidden border-l-4 border-amber-900">
+                {/* Cart Header */}
+                <div className="p-6 border-b border-amber-700">
+                  <h3 className="text-lg font-semibold text-amber-900">
+                    <TranslatedText translationKey="cart" />
+                  </h3>
+                </div>
 
                 {/* Cart Content */}
                 <div className="p-6">
@@ -406,6 +405,20 @@ export default function BuyerPage() {
                         ))}
                       </div>
 
+                      {/* Delivery Address Input */}
+                      <div className="mb-4">
+                        <label className="block text-sm font-medium text-amber-900 mb-2">
+                          <TranslatedText translationKey="deliveryAddress" />
+                        </label>
+                        <textarea
+                          value={deliveryAddress}
+                          onChange={(e) => setDeliveryAddress(e.target.value)}
+                          placeholder="Enter your complete delivery address..."
+                          className="w-full p-3 border-2 border-amber-300 rounded-md focus:border-amber-600 focus:outline-none resize-none text-amber-900 bg-white"
+                          rows={3}
+                        />
+                      </div>
+
                       {/* Cart Footer */}
                       <div className="border-t border-amber-700 pt-4">
                         <div className="flex justify-between items-center mb-4">
@@ -419,7 +432,8 @@ export default function BuyerPage() {
 
                         <button
                           onClick={checkout}
-                          className="w-full bg-amber-800 hover:bg-amber-700 text-white py-3 px-4 rounded-md font-semibold transition-colors"
+                          disabled={!deliveryAddress.trim()}
+                          className="w-full bg-amber-800 hover:bg-amber-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white py-3 px-4 rounded-md font-semibold transition-colors"
                         >
                           <TranslatedText translationKey="placeOrder" />
                         </button>

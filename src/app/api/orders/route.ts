@@ -18,7 +18,8 @@ export async function POST(req: NextRequest) {
     console.log("Body keys:", Object.keys(body || {}));
     
     const items: { productId: string; quantity: number }[] = body.items || [];
-    const address: string = body.address || "";
+    // FIX: Changed from body.address to body.deliveryAddress to match frontend
+    const address: string = body.deliveryAddress || body.address || "";
 
     console.log("Parsed items:", items);
     console.log("Items length:", items.length);
@@ -26,16 +27,17 @@ export async function POST(req: NextRequest) {
     console.log("Address length:", address.length);
     console.log("=== END DEBUG ===");
 
-    if (!items.length || !address) {
+    if (!items.length || !address.trim()) {
       console.log("Validation failed:");
       console.log("- Items empty:", !items.length);
-      console.log("- Address empty:", !address);
+      console.log("- Address empty:", !address.trim());
       return NextResponse.json({ 
         success: false, 
-        message: "Missing items or address",
+        message: "Missing items or delivery address",
         debug: {
           itemsLength: items.length,
           addressLength: address.length,
+          addressTrimmed: address.trim(),
           receivedBody: body
         }
       }, { status: 400 });
@@ -67,7 +69,7 @@ export async function POST(req: NextRequest) {
           artisanId,
           status: "pending",
           totalAmount,
-          address,
+          address: address.trim(), // Trim the address before saving
           buyerCity: buyer?.city || null,
           buyerState: buyer?.state || null,
           items: {

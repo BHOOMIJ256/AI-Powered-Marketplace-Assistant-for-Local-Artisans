@@ -7,7 +7,7 @@ import { ApiResponse, User } from '@/types';
 
 export async function POST(request: NextRequest) {
   try {
-    let body;
+    let body : any = {};
     
     // Handle both JSON and form data
     const contentType = request.headers.get('content-type');

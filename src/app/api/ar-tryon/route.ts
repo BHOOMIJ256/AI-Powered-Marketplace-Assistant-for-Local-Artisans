@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const AR_BACKEND_URL = process.env.AR_BACKEND_URL || "http://localhost:8001";
+const AR_BACKEND_URL = process.env.AR_BACKEND_URL || "http://localhost:8002";
 
 export async function POST(request: NextRequest) {
   try {

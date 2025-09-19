@@ -22,7 +22,7 @@ import json
 import re
 
 # Load environment variables from .env file
-load_dotenv()
+load_dotenv("../.env")
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -34,7 +34,14 @@ app = FastAPI(
 # CORS for Next.js frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_origins=[
+        "http://localhost:3000", 
+        "http://127.0.0.1:3000",
+        "https://*.railway.app",          # Allow Railway domains
+        "https://*.vercel.app",           # If you deploy frontend on Vercel
+        "https://*.netlify.app",          # If you deploy frontend on Netlify
+        # Add your actual production domain when you get one
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -406,4 +413,6 @@ async def generate_artisan_story(
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    import os
+    port = int(os.environ.get('PORT', 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port, log_level="info")

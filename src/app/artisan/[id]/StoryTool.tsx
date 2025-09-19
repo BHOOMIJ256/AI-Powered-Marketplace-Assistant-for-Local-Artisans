@@ -1,4 +1,4 @@
-// Fixed StoryTool.tsx - Replace line 354 with the actual voice button
+// StoryTool.tsx - Updated with better error handling and UX
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -61,7 +61,7 @@ interface Props {
     caption: string;
     hashtags: string[];
     imageUrl?: string;
-  }) => void;
+  }) => Promise<void>;
 }
 
 export default function StoryTool({ onPostCreated }: Props) {
@@ -71,6 +71,7 @@ export default function StoryTool({ onPostCreated }: Props) {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [result, setResult] = useState<null | StoryResult>(null);
   const [aiBackendStatus, setAiBackendStatus] = useState<"checking" | "available" | "unavailable">("checking");
 
@@ -83,87 +84,86 @@ export default function StoryTool({ onPostCreated }: Props) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
-    // Check microphone permission and voice support
-    const checkVoiceSupport = async () => {
-      try {
-        // Check if voice recording is supported
-        const SR = (typeof window !== "undefined" && (window.SpeechRecognition || window.webkitSpeechRecognition));
-        if (!SR) {
-          setVoiceSupported(false);
-          return;
-        }
-
-        // Check microphone permission
-        if (navigator.permissions && navigator.permissions.query) {
-          try {
-            const permission = await navigator.permissions.query({ name: 'microphone' as PermissionName });
-            setMicPermission(permission.state);
-            
-            permission.onchange = () => {
-              setMicPermission(permission.state);
-            };
-          } catch (e) {
-            console.log("Permission API not supported, will prompt user");
-            setMicPermission("prompt");
-          }
-        } else {
-          setMicPermission("prompt");
-        }
-
-        // Initialize speech recognition
-        const rec = new SR();
-        rec.lang = "en-IN";
-        rec.continuous = false;
-        rec.interimResults = false;
-        rec.maxAlternatives = 1;
-        
-        rec.onresult = (event: SpeechRecognitionEvent) => {
-          let transcript = "";
-          for (let i = event.resultIndex; i < event.results.length; i++) {
-            transcript += event.results[i][0].transcript;
-          }
-          setNote(prev => (prev ? prev + " " : "") + transcript.trim());
-          setIsRecording(false);
-          setError(null);
-        };
-        
-        rec.onend = () => {
-          setIsRecording(false);
-        };
-        
-        rec.onerror = (event: any) => {
-          console.error("Speech recognition error:", event.error);
-          
-          if (event.error === "not-allowed") {
-            setError("Microphone access denied. Please allow microphone access in your browser settings and try again.");
-            setMicPermission("denied");
-          } else if (event.error === "no-speech") {
-            setError("No speech detected. Please speak clearly and try again.");
-          } else if (event.error === "audio-capture") {
-            setError("Microphone not available. Please check your microphone connection.");
-          } else {
-            setError(`Voice recognition error: ${event.error}`);
-          }
-          
-          setIsRecording(false);
-        };
-        
-        recognitionRef.current = rec;
-        setVoiceSupported(true);
-        
-      } catch (e) {
-        console.error("Failed to initialize speech recognition:", e);
-        setVoiceSupported(false);
-      }
-    };
-
     checkVoiceSupport();
     checkAIBackendStatus();
   }, []);
 
+  // Clear success messages after 3 seconds
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => setSuccess(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
+
+  // Check microphone permission and voice support
+  const checkVoiceSupport = async () => {
+    try {
+      const SR = (typeof window !== "undefined" && (window.SpeechRecognition || window.webkitSpeechRecognition));
+      if (!SR) {
+        setVoiceSupported(false);
+        return;
+      }
+
+      if (navigator.permissions && navigator.permissions.query) {
+        try {
+          const permission = await navigator.permissions.query({ name: 'microphone' as PermissionName });
+          setMicPermission(permission.state);
+          permission.onchange = () => setMicPermission(permission.state);
+        } catch (e) {
+          setMicPermission("prompt");
+        }
+      } else {
+        setMicPermission("prompt");
+      }
+
+      const rec = new SR();
+      rec.lang = "en-IN";
+      rec.continuous = false;
+      rec.interimResults = false;
+      rec.maxAlternatives = 1;
+      
+      rec.onresult = (event: SpeechRecognitionEvent) => {
+        let transcript = "";
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          transcript += event.results[i][0].transcript;
+        }
+        setNote(prev => (prev ? prev + " " : "") + transcript.trim());
+        setIsRecording(false);
+        setError(null);
+      };
+      
+      rec.onend = () => setIsRecording(false);
+      
+      rec.onerror = (event: any) => {
+        console.error("Speech recognition error:", event.error);
+        
+        if (event.error === "not-allowed") {
+          setError("Microphone access denied. Please allow microphone access in your browser settings and try again.");
+          setMicPermission("denied");
+        } else if (event.error === "no-speech") {
+          setError("No speech detected. Please speak clearly and try again.");
+        } else if (event.error === "audio-capture") {
+          setError("Microphone not available. Please check your microphone connection.");
+        } else {
+          setError(`Voice recognition error: ${event.error}`);
+        }
+        
+        setIsRecording(false);
+      };
+      
+      recognitionRef.current = rec;
+      setVoiceSupported(true);
+      
+    } catch (e) {
+      console.error("Failed to initialize speech recognition:", e);
+      setVoiceSupported(false);
+    }
+  };
+
   async function checkAIBackendStatus() {
     try {
-      const res = await fetch("http://localhost:8000/health", { 
+        const res = await fetch("https://artisan-aiservice-production.up.railway.app/health", { 
         method: "GET",
         signal: AbortSignal.timeout(2000)
       });
@@ -176,7 +176,7 @@ export default function StoryTool({ onPostCreated }: Props) {
   async function requestMicrophonePermission() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      stream.getTracks().forEach(track => track.stop()); // Stop the stream immediately
+      stream.getTracks().forEach(track => track.stop());
       setMicPermission("granted");
       setError(null);
       return true;
@@ -194,7 +194,6 @@ export default function StoryTool({ onPostCreated }: Props) {
       return;
     }
     
-    // Check permission first
     if (micPermission === "denied") {
       setError("Microphone access is blocked. Please enable it in your browser settings.");
       return;
@@ -207,7 +206,6 @@ export default function StoryTool({ onPostCreated }: Props) {
     
     setError(null);
     setIsRecording(true);
-    setNote(""); // Clear previous note when starting new recording
     
     try {
       recognitionRef.current.start();
@@ -238,6 +236,7 @@ export default function StoryTool({ onPostCreated }: Props) {
     }
     setLoading(true);
     setError(null);
+    setSuccess(null);
     setResult(null);
     
     try {
@@ -249,7 +248,7 @@ export default function StoryTool({ onPostCreated }: Props) {
       form.append("model_name", "gemini-1.5-flash");
 
       console.log("🚀 Sending request to /api/storytelling");
-      const res = await fetch("/api/storytelling", { method: "POST", body: form });
+      const res = await fetch("https://artisan-aiservice-production.up.railway.app/generate-story", { method: "POST", body: form });
       
       console.log("📡 Response status:", res.status, res.statusText);
       const data = await res.json();
@@ -278,6 +277,7 @@ export default function StoryTool({ onPostCreated }: Props) {
       
       if (extractedResult && extractedResult.title) {
         setResult(extractedResult);
+        setSuccess("✅ Story generated successfully! You can now save it as a post.");
         console.log("✅ Result set successfully!");
       } else {
         console.error("❌ No valid result found in response");
@@ -292,26 +292,38 @@ export default function StoryTool({ onPostCreated }: Props) {
     }
   }
 
-  // New function to save post
+  // Save post function
   async function saveAsPost() {
     if (!result || !onPostCreated) return;
     
     setSaving(true);
+    setError(null);
+    setSuccess(null);
+    
     try {
       // Upload image first if exists
       let imageUrl = undefined;
       if (imageFile) {
+        console.log("About to upload image:", imageFile.name);
         const formData = new FormData();
         formData.append('image', imageFile);
         
-        const uploadRes = await fetch('/api/upload', {
+        console.log("Making request to /api/uploads");
+        const uploadRes = await fetch('/api/uploads', {
           method: 'POST',
           body: formData,
         });
+
+        console.log("Upload response status:", uploadRes.status);
+        console.log("Upload response ok:", uploadRes.ok);
+
         
         if (uploadRes.ok) {
           const uploadData = await uploadRes.json();
+          console.log("Upload success:", uploadData);
           imageUrl = uploadData.url;
+        }else {
+        console.error("Upload failed:", uploadRes.status, uploadRes.statusText);
         }
       }
 
@@ -332,8 +344,7 @@ export default function StoryTool({ onPostCreated }: Props) {
       setError(null);
       
       // Show success message
-      setError("✅ Post saved successfully!");
-      setTimeout(() => setError(null), 3000);
+      setSuccess("🎉 Post saved successfully! Check the Posts tab to see it.");
       
     } catch (err: any) {
       console.error("Failed to save post:", err);
@@ -341,12 +352,16 @@ export default function StoryTool({ onPostCreated }: Props) {
     } finally {
       setSaving(false);
     }
+
   }
 
   async function copy(text: string) {
     try {
       await navigator.clipboard.writeText(text);
-    } catch {}
+      setSuccess("📋 Copied to clipboard!");
+    } catch (e) {
+      console.error("Failed to copy:", e);
+    }
   }
 
   function drawPoster() {
@@ -402,6 +417,7 @@ export default function StoryTool({ onPostCreated }: Props) {
       a.href = url;
       a.download = "story_poster.png";
       a.click();
+      setSuccess("📥 Poster downloaded!");
     }, 50);
   }
 
@@ -423,7 +439,7 @@ export default function StoryTool({ onPostCreated }: Props) {
         <button 
           type="button" 
           onClick={stopRecording} 
-          className="rounded-md border border-foreground px-3 py-1.5 text-xs font-medium bg-red-100 text-red-800"
+          className="rounded-md border border-foreground px-3 py-1.5 text-xs font-medium bg-red-100 text-red-800 animate-pulse"
         >
           🛑 Stop Recording
         </button>
@@ -442,15 +458,15 @@ export default function StoryTool({ onPostCreated }: Props) {
   }
 
   return (
-    <section className="border rounded-md p-4 space-y-3">
+    <section className="border rounded-md p-4 space-y-3 bg-white/50 backdrop-blur-sm">
       <div className="flex items-center justify-between">
-        <h2 className="font-medium">One-Click Story Generator</h2>
+        <h2 className="font-medium text-lg">🎨 One-Click Story Generator</h2>
         <div className="flex items-center gap-2">
           {aiBackendStatus === "checking" && (
-            <span className="text-xs px-2 py-1 bg-gray-100 rounded">Checking AI...</span>
+            <span className="text-xs px-2 py-1 bg-gray-100 rounded animate-pulse">Checking AI...</span>
           )}
           {aiBackendStatus === "available" && (
-            <span className="text-xs px-2 py-1 bg-green-100 text-green-800 rounded">🤖 AI Backend Available</span>
+            <span className="text-xs px-2 py-1 bg-green-100 text-green-800 rounded">🤖 AI Ready</span>
           )}
           {aiBackendStatus === "unavailable" && (
             <span className="text-xs px-2 py-1 bg-yellow-100 text-yellow-800 rounded">📝 Template Mode</span>
@@ -458,85 +474,174 @@ export default function StoryTool({ onPostCreated }: Props) {
         </div>
       </div>
       
-      <form onSubmit={onSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-3 items-start">
-        <div className="space-y-2">
+      <form onSubmit={onSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+        <div className="space-y-3">
           <div className="flex flex-wrap items-center gap-2">
-            <input type="file" accept="image/*" onChange={e=>setImageFile(e.target.files?.[0] || null)} />
-            <input type="file" accept="audio/*" onChange={e=>setAudioFile(e.target.files?.[0] || null)} />
+            <label className="cursor-pointer">
+              <input 
+                type="file" 
+                accept="image/*" 
+                onChange={e=>setImageFile(e.target.files?.[0] || null)}
+                className="hidden"
+              />
+              <span className="rounded-md border border-foreground px-3 py-1.5 text-xs font-medium hover:bg-foreground/5 inline-block">
+                📸 {imageFile ? 'Change Image' : 'Choose Image'}
+              </span>
+            </label>
+            
+            <label className="cursor-pointer">
+              <input 
+                type="file" 
+                accept="audio/*" 
+                onChange={e=>setAudioFile(e.target.files?.[0] || null)}
+                className="hidden"
+              />
+              <span className="rounded-md border border-foreground px-3 py-1.5 text-xs font-medium hover:bg-foreground/5 inline-block">
+                🎵 {audioFile ? 'Change Audio' : 'Add Audio'}
+              </span>
+            </label>
+            
             {voiceSupported ? getVoiceButtonContent() : (
               <span className="text-xs text-gray-500 px-2 py-1 bg-gray-100 rounded">
                 🚫 Voice not supported
               </span>
             )}
           </div>
+
+          {imageFile && (
+            <div className="text-xs text-gray-600">
+              📁 Selected: {imageFile.name}
+            </div>
+          )}
+          
+          {audioFile && (
+            <div className="text-xs text-gray-600">
+              🎵 Audio: {audioFile.name}
+            </div>
+          )}
+          
           <textarea 
-            className="w-full border rounded p-2 min-h-24" 
-            placeholder={voiceSupported ? "Type your note here, or use the voice button above" : "Type your product description here (voice not supported in this browser)"} 
+            className="w-full border rounded-md p-3 min-h-24 resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" 
+            placeholder={voiceSupported ? "Type your product description here, or use the voice button above..." : "Type your product description here (voice not supported in this browser)"} 
             value={note} 
-            onChange={e=>setNote(e.target.value)} 
+            onChange={e=>setNote(e.target.value)}
+            rows={4}
           />
+          
           <button 
             disabled={loading || !imageFile} 
-            className="rounded-md bg-foreground text-background px-4 py-2 text-sm font-medium disabled:opacity-60"
+            className="w-full rounded-md bg-foreground text-background px-4 py-3 text-sm font-medium disabled:opacity-60 hover:bg-foreground/90 transition-colors"
           >
-            {loading ? "Generating..." : "Generate Story"}
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Generating Story...
+              </span>
+            ) : "✨ Generate Story"}
           </button>
+
+          {/* Status Messages */}
           {error && (
-            <p className={`text-sm ${error.startsWith('✅') ? 'text-green-600' : 'text-red-600'}`}>
-              {error}
-            </p>
+            <div className="p-3 rounded-md bg-red-50 border border-red-200">
+              <p className="text-sm text-red-600">{error}</p>
+            </div>
           )}
+          
+          {success && (
+            <div className="p-3 rounded-md bg-green-50 border border-green-200">
+              <p className="text-sm text-green-600">{success}</p>
+            </div>
+          )}
+          
           {!voiceSupported && (
-            <p className="text-xs text-gray-500">
-              💡 Tip: Voice recording requires HTTPS or localhost. You can still type your notes or upload audio files.
-            </p>
-          )}
-          {micPermission === "denied" && (
-            <p className="text-xs text-red-600">
-              🔒 Microphone access blocked. Click the lock icon in your browser address bar to enable it.
+            <p className="text-xs text-gray-500 bg-blue-50 p-2 rounded">
+              💡 Voice recording requires HTTPS or localhost. You can still type or upload audio files.
             </p>
           )}
         </div>
         
-        <div className="space-y-2">
-          {previewUrl && <img src={previewUrl} alt="preview" className="w-full h-52 object-cover rounded border" />}
+        <div className="space-y-3">
+          {previewUrl && (
+            <div className="relative">
+              <img 
+                src={previewUrl} 
+                alt="preview" 
+                className="w-full h-52 object-cover rounded-md border shadow-sm" 
+              />
+              <button
+                type="button"
+                onClick={() => setImageFile(null)}
+                className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+              >
+                ✕
+              </button>
+            </div>
+          )}
+          
           {result && (
-            <div className="space-y-3 border rounded-lg p-3 bg-gray-50">
-              <div>
-                <p className="text-xs uppercase text-gray-500 font-medium">Title</p>
-                <p className="text-sm font-medium">{result.title}</p>
+            <div className="space-y-4 border rounded-lg p-4 bg-gradient-to-br from-blue-50 to-purple-50 shadow-sm">
+              <div className="text-center">
+                <h3 className="font-medium text-green-700 mb-2">🎉 Story Generated!</h3>
               </div>
-              <div>
-                <p className="text-xs uppercase text-gray-500 font-medium">Description</p>
-                <p className="text-sm whitespace-pre-wrap">{result.description}</p>
-                <button type="button" className="mt-1 text-xs underline text-blue-600" onClick={()=>copy(result.description)}>Copy</button>
-              </div>
-              <div>
-                <p className="text-xs uppercase text-gray-500 font-medium">Caption</p>
-                <p className="text-sm whitespace-pre-wrap">{result.caption}</p>
-                <button type="button" className="mt-1 text-xs underline text-blue-600" onClick={()=>copy(result.caption)}>Copy</button>
-              </div>
-              <div>
-                <p className="text-xs uppercase text-gray-500 font-medium">Hashtags</p>
-                <p className="text-sm">{result.hashtags.map(h=>`#${h}`).join(" ")}</p>
-                <button type="button" className="mt-1 text-xs underline text-blue-600" onClick={()=>copy(result.hashtags.map(h=>`#${h}`).join(" "))}>Copy</button>
+              
+              <div className="space-y-3">
+                <div>
+                  <p className="text-xs uppercase text-gray-500 font-medium mb-1">📝 Title</p>
+                  <p className="text-sm font-medium bg-white p-2 rounded border">{result.title}</p>
+                  <button type="button" className="mt-1 text-xs underline text-blue-600 hover:text-blue-800" onClick={()=>copy(result.title)}>📋 Copy</button>
+                </div>
+                
+                <div>
+                  <p className="text-xs uppercase text-gray-500 font-medium mb-1">📄 Description</p>
+                  <p className="text-sm whitespace-pre-wrap bg-white p-2 rounded border max-h-24 overflow-y-auto">{result.description}</p>
+                  <button type="button" className="mt-1 text-xs underline text-blue-600 hover:text-blue-800" onClick={()=>copy(result.description)}>📋 Copy</button>
+                </div>
+                
+                <div>
+                  <p className="text-xs uppercase text-gray-500 font-medium mb-1">💬 Caption</p>
+                  <p className="text-sm whitespace-pre-wrap bg-white p-2 rounded border">{result.caption}</p>
+                  <button type="button" className="mt-1 text-xs underline text-blue-600 hover:text-blue-800" onClick={()=>copy(result.caption)}>📋 Copy</button>
+                </div>
+                
+                <div>
+                  <p className="text-xs uppercase text-gray-500 font-medium mb-1"># Hashtags</p>
+                  <div className="flex flex-wrap gap-1 bg-white p-2 rounded border">
+                    {result.hashtags.map((h, i) => (
+                      <span key={i} className="bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs">
+                        #{h}
+                      </span>
+                    ))}
+                  </div>
+                  <button type="button" className="mt-1 text-xs underline text-blue-600 hover:text-blue-800" onClick={()=>copy(result.hashtags.map(h=>`#${h}`).join(" "))}>📋 Copy All</button>
+                </div>
               </div>
               
               {/* Action buttons */}
-              <div className="flex gap-2 pt-2 border-t">
+              <div className="flex gap-2 pt-3 border-t">
                 {onPostCreated && (
                   <button 
                     type="button" 
                     onClick={saveAsPost}
                     disabled={saving}
-                    className="flex-1 rounded-md bg-green-600 text-white px-3 py-2 text-sm font-medium hover:bg-green-700 disabled:opacity-60"
+                    className="flex-1 rounded-md bg-green-600 text-white px-3 py-2.5 text-sm font-medium hover:bg-green-700 disabled:opacity-60 transition-colors"
                   >
-                    {saving ? "Saving..." : "📌 Save as Post"}
+                    {saving ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Saving...
+                      </span>
+                    ) : "📌 Save as Post"}
                   </button>
                 )}
                 <button 
                   type="button" 
-                  className="rounded-md border border-foreground px-3 py-2 text-sm font-medium hover:bg-foreground/5" 
+                  className="rounded-md border border-foreground px-3 py-2.5 text-sm font-medium hover:bg-foreground/5 transition-colors" 
                   onClick={downloadPoster}
                 >
                   📥 Download Poster
