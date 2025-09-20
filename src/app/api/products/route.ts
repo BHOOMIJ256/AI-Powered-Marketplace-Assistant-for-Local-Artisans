@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { writeFile, mkdir } from "fs/promises";
-import path from "path";
+import { put } from "@vercel/blob";
 import { db } from "@/lib/db";
 
 export async function GET() {
@@ -58,7 +57,7 @@ export async function POST(req: NextRequest) {
 
     let imageUrl: string | null = null;
 
-    // Handle image upload if provided
+    // Handle image upload with Vercel Blob
     if (imageFile && imageFile.size > 0) {
       try {
         // Validate file type
@@ -79,28 +78,22 @@ export async function POST(req: NextRequest) {
           }, { status: 400 });
         }
 
-        // Create uploads directory if it doesn't exist
-        const uploadsDir = path.join(process.cwd(), "public", "uploads", "products");
-        await mkdir(uploadsDir, { recursive: true });
-
         // Generate unique filename
         const timestamp = Date.now();
         const randomString = Math.random().toString(36).substring(2, 15);
         const fileExtension = imageFile.name.split('.').pop()?.toLowerCase() || 'jpg';
-        const filename = `${timestamp}-${randomString}.${fileExtension}`;
-        const filepath = path.join(uploadsDir, filename);
+        const filename = `products/${timestamp}-${randomString}.${fileExtension}`;
 
-        // Convert file to buffer and save
-        const bytes = await imageFile.arrayBuffer();
-        const buffer = Buffer.from(bytes);
-        await writeFile(filepath, buffer);
+        // Upload to Vercel Blob
+        const blob = await put(filename, imageFile, {
+          access: 'public',
+        });
 
-        // Set the public URL
-        imageUrl = `/uploads/products/${filename}`;
-        console.log("Image saved successfully:", { filepath, imageUrl });
+        imageUrl = blob.url;
+        console.log("Image uploaded successfully to Vercel Blob:", { filename, imageUrl });
       } catch (error) {
-        console.error("Failed to save image:", error);
-        return NextResponse.json({ success: false, message: "Failed to save image" }, { status: 500 });
+        console.error("Failed to upload image to Vercel Blob:", error);
+        return NextResponse.json({ success: false, message: "Failed to upload image" }, { status: 500 });
       }
     }
 
