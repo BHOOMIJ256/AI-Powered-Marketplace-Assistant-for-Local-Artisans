@@ -16,14 +16,26 @@ let translateClient: TranslationServiceClient | null = null;
 
 function getTranslateClient(): TranslationServiceClient {
   if (!translateClient) {
-    translateClient = new TranslationServiceClient({
-      projectId: 'story-telling-project-470510',
-      keyFilename: process.cwd() + '/google-credentials.json',
-    });
+    // Use environment variable instead of file
+    const credentialsJson = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+    
+    if (!credentialsJson) {
+      throw new Error('GOOGLE_APPLICATION_CREDENTIALS_JSON environment variable not found');
+    }
+
+    try {
+      const credentials = JSON.parse(credentialsJson);
+      translateClient = new TranslationServiceClient({
+        projectId: 'story-telling-project-470510',
+        credentials: credentials, // Use parsed JSON credentials
+      });
+    } catch (error) {
+      console.error('Failed to parse Google credentials:', error);
+      throw new Error('Invalid Google credentials JSON format');
+    }
   }
   return translateClient;
 }
-
 // Translation cache to avoid repeated API calls
 const translationCache = new Map<string, string>();
 
