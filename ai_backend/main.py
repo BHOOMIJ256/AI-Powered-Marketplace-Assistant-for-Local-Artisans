@@ -37,16 +37,15 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:3000", 
         "http://127.0.0.1:3000",
-        "https://*.railway.app",          # Allow Railway domains
-        "https://*.vercel.app",           # If you deploy frontend on Vercel
-        "https://*.netlify.app",          # If you deploy frontend on Netlify
-        # Add your actual production domain when you get one
+        "https://artisan-aiservice-production.up.railway.app",
+        "https://ai-powered-marketplace-assistant-fo-seven.vercel.app",  # Add your exact Vercel domain
+        "https://ai-powered-marketplace-assistant-for-local-artisans-1fs3pgq22.vercel.app",  # Your other domain from logs
+        # Add any other Vercel domains you have
     ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
 # ---------------- Pydantic models ----------------
 
 class ArtisanStoryRequest(BaseModel):
