@@ -1,7 +1,8 @@
 // src/app/api/storytelling/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
-const STORYTELLING_API_URL = process.env.STORYTELLING_API_URL || "http://localhost:8000";
+// Remove trailing slash if it exists
+const STORYTELLING_API_URL = (process.env.STORYTELLING_API_URL || "http://localhost:8000").replace(/\/$/, '');
 
 // Type definitions for the API responses
 interface ProcessingInfo {
@@ -31,23 +32,36 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     
+    // Debug logging
+    console.log("STORYTELLING_API_URL:", STORYTELLING_API_URL);
+    const targetUrl = `${STORYTELLING_API_URL}/generate-story`;
+    console.log("Target URL:", targetUrl);
+    
     // Get the endpoint from query params (for backwards compatibility)
     const url = new URL(request.url);
     const endpoint = url.searchParams.get('endpoint') || 'transcribe-and-respond';
 
-    // Forward the request to the Python backend - FIXED: Use correct endpoint
-    const response = await fetch(`${STORYTELLING_API_URL}/generate-story`, {
+    // Forward the request to the Python backend
+    const response = await fetch(targetUrl, {
       method: 'POST',
       body: formData,
+      headers: {
+        // Let fetch handle Content-Type for FormData automatically
+      }
     });
+
+    console.log("Response status:", response.status);
+    console.log("Response headers:", Object.fromEntries(response.headers.entries()));
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('FastAPI Error:', errorText);
-      throw new Error(`Storytelling API error: ${response.status} ${response.statusText}`);
+      console.error('FastAPI Error Response:', errorText);
+      throw new Error(`Storytelling API error: ${response.status} ${response.statusText} - ${errorText}`);
     }
 
     const data = await response.json() as BackendResponse;
+    console.log("Backend response success:", data.success);
+    console.log("Backend response data keys:", Object.keys(data));
     
     // Transform the response to match expected frontend format
     const responseData = {
@@ -74,8 +88,11 @@ export async function POST(request: NextRequest) {
     let statusCode = 500;
 
     if (error instanceof Error) {
-      if (error.message.includes('fetch')) {
-        errorMessage = "Could not connect to the storytelling service. Please ensure the Python service is running.";
+      if (error.message.includes('fetch') || 
+          error.message.includes('ENOTFOUND') || 
+          error.message.includes('ECONNREFUSED') ||
+          error.message.includes('network')) {
+        errorMessage = `Could not connect to storytelling service at ${STORYTELLING_API_URL}. Service may be down.`;
         statusCode = 503;
       } else {
         errorMessage = error.message;
@@ -86,6 +103,11 @@ export async function POST(request: NextRequest) {
       {
         success: false,
         error: errorMessage,
+        debug: {
+          storytelling_url: STORYTELLING_API_URL,
+          target_url: `${STORYTELLING_API_URL}/generate-story`,
+          error_type: error instanceof Error ? error.constructor.name : typeof error
+        },
         timestamp: new Date().toISOString()
       },
       { status: statusCode }
@@ -95,8 +117,11 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
+    const healthUrl = `${STORYTELLING_API_URL}/health`;
+    console.log("Health check URL:", healthUrl);
+    
     // Health check - ping the Python service
-    const healthResponse = await fetch(`${STORYTELLING_API_URL}/health`, {
+    const healthResponse = await fetch(healthUrl, {
       method: 'GET',
     });
 
@@ -115,6 +140,7 @@ export async function GET() {
       message: "AI Storytelling API Endpoint",
       service_status: isHealthy ? "healthy" : "unhealthy",
       python_service_url: STORYTELLING_API_URL,
+      health_check_url: healthUrl,
       backend_health: healthData,
       endpoints: {
         "POST /api/storytelling": "Generate artisan product content from image + optional audio/text",
@@ -124,11 +150,13 @@ export async function GET() {
       supported_languages: ["en-US", "es-ES", "fr-FR", "de-DE", "it-IT", "pt-BR", "hi-IN", "ja-JP", "ko-KR"],
     });
   } catch (error) {
+    console.error("Health check failed:", error);
     return NextResponse.json({
       message: "AI Storytelling API Endpoint",
       service_status: "unknown",
       python_service_url: STORYTELLING_API_URL,
       error: "Could not check Python service health",
+      error_details: error instanceof Error ? error.message : "Unknown error",
       endpoints: {
         "POST /api/storytelling": "Generate artisan product content from image + optional audio/text",
         "POST /api/storytelling?endpoint=transcribe-and-respond": "Legacy endpoint (same as above)",
