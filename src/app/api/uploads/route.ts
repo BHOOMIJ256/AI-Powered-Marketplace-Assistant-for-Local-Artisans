@@ -1,8 +1,6 @@
-// app/api/upload/route.ts
+// app/api/uploads/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile } from "fs/promises";
-import { join } from "path";
-import { randomUUID } from "crypto";
+import { put } from "@vercel/blob";
 
 export async function POST(request: NextRequest) {
   try {
@@ -32,33 +30,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
     // Generate unique filename
-    const fileExtension = file.name.split('.').pop() || 'jpg';
-    const fileName = `${randomUUID()}.${fileExtension}`;
-    
-    // Create uploads directory path
-    const uploadsDir = join(process.cwd(), 'public', 'uploads');
-    const filePath = join(uploadsDir, fileName);
+    const timestamp = Date.now();
+    const randomString = Math.random().toString(36).substring(2, 15);
+    const fileExtension = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+    const filename = `uploads/${timestamp}-${randomString}.${fileExtension}`;
 
-    // Ensure uploads directory exists
-    const fs = require('fs');
-    if (!fs.existsSync(uploadsDir)) {
-      fs.mkdirSync(uploadsDir, { recursive: true });
-    }
-
-    // Write file
-    await writeFile(filePath, buffer);
-    
-    // Return the public URL
-    const url = `/uploads/${fileName}`;
+    // Upload to Vercel Blob
+    const blob = await put(filename, file, {
+      access: 'public',
+    });
 
     return NextResponse.json({ 
       success: true, 
-      url,
-      filename: fileName,
+      url: blob.url,
+      filename: filename,
       size: file.size,
       type: file.type
     });
