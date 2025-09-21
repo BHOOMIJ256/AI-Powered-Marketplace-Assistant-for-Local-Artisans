@@ -163,7 +163,7 @@ export default function StoryTool({ onPostCreated }: Props) {
 
   async function checkAIBackendStatus() {
     try {
-        const res = await fetch("/api/storytelling", { 
+        const res = await fetch("https://artisan-aiservice-production.up.railway.app/health", { 
         method: "GET",
         signal: AbortSignal.timeout(2000)
       });
@@ -248,7 +248,7 @@ export default function StoryTool({ onPostCreated }: Props) {
       form.append("model_name", "gemini-1.5-flash");
 
       console.log("🚀 Sending request to /api/storytelling");
-      const res = await fetch("/api/storytelling", { method: "POST", body: form })
+      const res = await fetch("https://artisan-aiservice-production.up.railway.app/generate-story", { method: "POST", body: form });
       
       console.log("📡 Response status:", res.status, res.statusText);
       const data = await res.json();
